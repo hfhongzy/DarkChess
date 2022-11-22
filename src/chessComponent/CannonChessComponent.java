@@ -7,6 +7,6 @@ public class CannonChessComponent extends ChessComponent {
         super(width, 5);
         this.teamColor = color;
         name = color == TeamColor.RED ? "炮" : "砲";
-        ID = 5;
+        ID = 6;
     }
 }

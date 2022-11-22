@@ -7,6 +7,6 @@ public class SoldierChessComponent extends ChessComponent {
         super(width, 1);
         this.teamColor = color;
         name = color == TeamColor.RED ? "兵" : "卒";
-        ID = 6;
+        ID = 5;
     }
 }

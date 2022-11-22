@@ -5,6 +5,7 @@ import controller.GameController;
 import model.TeamColor;
 
 import javax.swing.*;
+import javax.xml.stream.Location;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -103,56 +104,57 @@ public class Chessboard extends JComponent {
     }
     */
     boolean checkMoveTo(ChessComponent from, ChessComponent to) {
-        if (from instanceof CannonChessComponent) {
-
+        if(to.isReversal()) return false;
+        if(to.isEaten()) return true;
+        if(from.getTeamColor() == to.getTeamColor()) return false;
+        if (from instanceof SoldierChessComponent) {
+            return (to instanceof SoldierChessComponent) || (to instanceof GeneralChessComponent);
         }
-        else {
-
+        else if(to instanceof CannonChessComponent){
+            return true;
+        } else {
+            return from.getID() <= to.getID();
         }
-        return true;
+    }
+    private boolean validXY(int x, int y) {
+        return 0 <= x && x < 8 && 0 <= y && y < 4;
     }
     void setReachableChess(ChessComponent chess, boolean status) { // 将 chess 可到达的棋子设置成 status, 并且重新绘制
-        /*
         ArrayList<ChessComponent> chessArr = new ArrayList<>();
         int X = chess.X(), Y = chess.Y();
+        final int []dx = {1, 0, -1, 0};
+        final int []dy = {0, 1, 0, -1};
         if (chess instanceof CannonChessComponent) {
-            for (int i = X - 1; i >= 0; i--)
-                if (checkMoveTo(chess, chessComponents[i][Y])) {
-                    chessArr.add(chessComponents[i][Y]);
-                    break;
+            for(int k = 0; k < 4; k ++) {
+                int x = X, y = Y, cnt = 0;
+                while(true) {
+                    x += dx[k];
+                    y += dy[k];
+                    if(!validXY(x, y))
+                        break;
+                    if(!chessComponents[x][y].isEaten())
+                        cnt ++;
+                    if(cnt == 2) {
+                        chessArr.add(chessComponents[x][y]);
+                    }
+                    if(cnt >= 3)
+                        break;
                 }
-            for (int i = X + 1; i < 8; i++)
-                if (checkMoveTo(chess, chessComponents[i][Y])) {
-                    chessArr.add(chessComponents[i][Y]);
-                    break;
-                }
-            for (int j = Y - 1; j >= 0; j--)
-                if (checkMoveTo(chess, chessComponents[X][j])) {
-                    chessArr.add(chessComponents[X][j]);
-                    break;
-                }
-            for (int j = Y + 1; j < 4; j++)
-                if (checkMoveTo(chess, chessComponents[X][j])) {
-                    chessArr.add(chessComponents[X][j]);
-                    break;
-                }
+            }
         }
         else {
-            if (X - 1 >= 0 && checkMoveTo(chess, chessComponents[X - 1][Y]))
-                chessArr.add(chessComponents[X - 1][Y]);
-            if (X + 1 < 8 && checkMoveTo(chess, chessComponents[X + 1][Y]))
-                chessArr.add(chessComponents[X + 1][Y]);
-            if (Y - 1 >= 0 && checkMoveTo(chess, chessComponents[X][Y - 1]))
-                chessArr.add(chessComponents[X][Y - 1]);
-            if (Y + 1 < 4 && checkMoveTo(chess, chessComponents[X][Y + 1]))
-                chessArr.add(chessComponents[X][Y + 1]);
+            for(int k = 0; k < 4; k ++) {
+                int x = X + dx[k], y = Y + dy[k];
+                if(validXY(x, y) && checkMoveTo(chess, chessComponents[x][y])) {
+                    chessArr.add(chessComponents[x][y]);
+                }
+            }
         }
-        for (int i = 0; i < chessArr.size(); i++) {
-            ChessComponent item = chessArr.get(i);
+        for (ChessComponent item : chessArr) {
             item.setReachable(status);
             item.repaint();
         }
-         */
+        
     }
     boolean checkFirst(ChessComponent chess) { // 判断 chess 是否可被选中
         return !chess.isEaten() && chess.getTeamColor() == playerStatus.getCurrentColor();
@@ -161,7 +163,7 @@ public class Chessboard extends JComponent {
         if (first == null) {
             if (chess.isReversal()) {
                 flip(chess);
-                chess.repaint();
+                chess.repaint(); //!!!!!!
             } else if (checkFirst(chess)) {
                 setReachableChess(chess, true);
                 first = chess;
@@ -206,10 +208,23 @@ public class Chessboard extends JComponent {
     }
     void move(ChessComponent chess1, ChessComponent chess2) {
         // todo : 将 chess1 移动到 chess2
+        int x1 = chess1.X(), y1 = chess1.Y();
+        int x2 = chess2.X(), y2 = chess2.Y();
+        chessComponents[x1][y1] = chess2;
+        chessComponents[x2][y2] = chess1;
+        int t = chess1.X(); chess1.setX(chess2.X()); chess2.setX(t);
+        t = chess1.Y(); chess1.setY(chess2.Y()); chess2.setY(t);
+        Point tt = chess1.getLocation();
+        chess1.setLocation(chess2.getLocation()); chess2.setLocation(tt);
         exchangePlayer();
     }
     void capture(ChessComponent chess1, ChessComponent chess2) {
         // todo : eat content
+        if(chess2.getTeamColor() == TeamColor.RED)
+            playerStatus.black_score += chess2.getScore();
+        else
+            playerStatus.red_score += chess2.getScore();
+        chess2.setEaten(true);
         move(chess1, chess2);
     }
     void flip(ChessComponent chess) {

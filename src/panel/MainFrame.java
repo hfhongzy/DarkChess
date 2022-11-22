@@ -31,7 +31,8 @@ public class MainFrame extends JFrame {
         JButton j = new JButton("testj");
         pj.add(j);
         pane.add("pj", pj);
-
+        
+        
         ((CardLayout) pane.getLayout()).show(pane, PLAY_GAME_PANEL); // 展示 card
 //        getContentPane();
         pack();
