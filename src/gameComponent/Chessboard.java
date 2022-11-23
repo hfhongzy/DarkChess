@@ -1,7 +1,10 @@
 package gameComponent;
 
+import ButtonComponent.RedoButton;
+import ButtonComponent.UndoButton;
 import chessComponent.*;
 import controller.GameController;
+import model.ChessStep;
 import model.TeamColor;
 
 import javax.swing.*;
@@ -22,15 +25,50 @@ public class Chessboard extends JComponent {
     private static final int SIDEBOX_WIDTH = 110;
     private static final int TOP_SPACING_LENGTH = 20;
     PlayerStatus playerStatus;
+    UndoButton undo;
+    RedoButton redo;
     public Chessboard(PlayerStatus playerStatus) {
         setLayout(null);
         setSize(WIDTH, HEIGHT);
         this.playerStatus = playerStatus;
-
+        current_time = -1;
+        chessSteps = new ArrayList<ChessStep>();
         initChessOnBoard();
         putChessOnBoard();
+        initButtons();
     }
-
+    public void initButtons() {
+        undo = new UndoButton(40, 20);
+        undo.setLocation(400, 500);
+        undo.addMouseListener(new MouseAdapter() {
+            boolean isPressed = false;
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (isPressed) undo();
+                isPressed = false;
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                isPressed = true;
+            }
+        });
+        add(undo); //?
+        redo = new RedoButton(40, 20);
+        redo.setLocation(400, 400);
+        redo.addMouseListener(new MouseAdapter() {
+            boolean isPressed = false;
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (isPressed) redo();
+                isPressed = false;
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                isPressed = true;
+            }
+        });
+        add(redo);
+    }
     public void initChessOnBoard() {
         // todo : 应该会把这个变成接口，读档/新开局两不误
         ArrayList<ChessComponent> chess = new ArrayList<>(); // 生成棋子列表
@@ -77,6 +115,7 @@ public class Chessboard extends JComponent {
         for (int i = 0; i < 8; i++)
             for (int j = 0; j < 4; j++)
                 add(chessComponents[i][j]);
+        
     }
 
     @Override
@@ -136,9 +175,8 @@ public class Chessboard extends JComponent {
                         cnt ++;
                     if(cnt == 2) {
                         chessArr.add(chessComponents[x][y]);
-                    }
-                    if(cnt >= 3)
                         break;
+                    }
                 }
             }
         }
@@ -158,6 +196,13 @@ public class Chessboard extends JComponent {
     }
     boolean checkFirst(ChessComponent chess) { // 判断 chess 是否可被选中
         return !chess.isEaten() && chess.getTeamColor() == playerStatus.getCurrentColor();
+    }
+    void checkWin() {
+        if(playerStatus.red_score >= 60) {
+        
+        } else if(playerStatus.black_score >= 60) {
+        
+        }
     }
     void onClick(ChessComponent chess) {
         if (first == null) {
@@ -206,8 +251,62 @@ public class Chessboard extends JComponent {
         playerStatus.setCurrentColor(playerStatus.getCurrentColor() == TeamColor.RED ? TeamColor.BLACK : TeamColor.RED);
         playerStatus.repaint();
     }
-    void move(ChessComponent chess1, ChessComponent chess2) {
-        // todo : 将 chess1 移动到 chess2
+    private ArrayList<ChessStep> chessSteps;
+    int current_time;
+    void modifySteps(ChessStep step) {
+        if(current_time == chessSteps.size()) {
+            chessSteps.add(step);
+        } else {
+            chessSteps.set(current_time, step);
+            while(current_time < chessSteps.size() - 1)
+                chessSteps.remove(chessSteps.size() - 1);
+        }
+    }
+    void undo() { //
+        if(first != null) {
+            first.setSelected(false);
+            first.repaint();
+            setReachableChess(first, false);
+        }
+        if(current_time == -1)
+            return ;
+        current_time --;
+        ChessStep opt = chessSteps.get(current_time + 1);
+        if(opt.getType() == 1) {
+            flipBuiltin(opt.getChess1());
+        } else if(opt.getType() == 2) {
+            moveBuiltin(opt.getChess1(), opt.getChess2());
+        } else {
+            captureBuiltin(opt.getChess1(), opt.getChess2());
+        }
+        opt.getChess1().repaint();
+        if(opt.getType() != 1)
+            opt.getChess2().repaint();
+    }
+    void redo() {
+        if(first != null) {
+            first.setSelected(false);
+            first.repaint();
+            setReachableChess(first, false);
+        }
+        if(current_time == chessSteps.size() - 1)
+            return ;
+        current_time ++;
+        ChessStep opt = chessSteps.get(current_time);
+        if(opt.getType() == 1) {
+            flipBuiltin(opt.getChess1());
+        } else if(opt.getType() == 2) {
+            moveBuiltin(opt.getChess1(), opt.getChess2());
+        } else {
+            captureBuiltin(opt.getChess1(), opt.getChess2());
+        }
+        opt.getChess1().repaint();
+        if(opt.getType() != 1)
+            opt.getChess2().repaint();
+    }
+    //Builtin 是内置函数，用于撤销和重做
+    //如果是玩家操作，由对应操作调用 Builtin
+    void moveBuiltin(ChessComponent chess1, ChessComponent chess2) {
         int x1 = chess1.X(), y1 = chess1.Y();
         int x2 = chess2.X(), y2 = chess2.Y();
         chessComponents[x1][y1] = chess2;
@@ -218,19 +317,54 @@ public class Chessboard extends JComponent {
         chess1.setLocation(chess2.getLocation()); chess2.setLocation(tt);
         exchangePlayer();
     }
-    void capture(ChessComponent chess1, ChessComponent chess2) {
-        // todo : eat content
+    void move(ChessComponent chess1, ChessComponent chess2) {
+        current_time ++;
+        moveBuiltin(chess1, chess2);
+        modifySteps(new ChessStep(2, chess1, chess2));
+    }
+    void captureBuiltin(ChessComponent chess1, ChessComponent chess2) {
+        if(chess2.isEaten()) {
+            if(chess2.getTeamColor() == TeamColor.RED)
+                playerStatus.black_score -= chess2.getScore();
+            else
+                playerStatus.red_score -= chess2.getScore();
+            chess2.setEaten(false);
+            moveBuiltin(chess1, chess2);
+            return ;
+        }
         if(chess2.getTeamColor() == TeamColor.RED)
             playerStatus.black_score += chess2.getScore();
         else
             playerStatus.red_score += chess2.getScore();
         chess2.setEaten(true);
-        move(chess1, chess2);
+        moveBuiltin(chess1, chess2);
+        checkWin();
+    }
+    void capture(ChessComponent chess1, ChessComponent chess2) {
+        current_time ++;
+        modifySteps(new ChessStep(3, chess1, chess2));
+        captureBuiltin(chess1, chess2);
+    }
+    void flipBuiltin(ChessComponent chess) {
+        if(chess.isReversal()) {
+            chess.setReversal(false);
+            if (playerStatus.getCurrentColor() == null) // 第一次翻转
+                playerStatus.setCurrentColor(chess.getTeamColor());
+            exchangePlayer();
+        } else {
+            chess.setReversal(true);
+            if(current_time == 0) {
+                playerStatus.setCurrentColor(null);
+                playerStatus.repaint();
+            } else {
+                exchangePlayer();
+            }
+        }
     }
     void flip(ChessComponent chess) {
-        chess.setReversal(false);
-        if (playerStatus.getCurrentColor() == null) // 第一次翻转
-            playerStatus.setCurrentColor(chess.getTeamColor());
-        exchangePlayer();
+        current_time ++;
+        modifySteps(new ChessStep(1, chess));
+//        System.out.println("Yeah!");
+        flipBuiltin(chess);
     }
 }
