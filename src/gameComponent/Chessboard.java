@@ -143,8 +143,8 @@ public class Chessboard extends JComponent {
     }
     */
     boolean checkMoveTo(ChessComponent from, ChessComponent to) {
-        if(to.isReversal()) return false;
         if(to.isEaten()) return true;
+        if(to.isReversal()) return false;
         if(from.getTeamColor() == to.getTeamColor()) return false;
         if (from instanceof SoldierChessComponent) {
             return (to instanceof SoldierChessComponent) || (to instanceof GeneralChessComponent);
