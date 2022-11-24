@@ -8,6 +8,7 @@ import model.ChessStep;
 import model.TeamColor;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.xml.stream.Location;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -68,6 +69,10 @@ public class Chessboard extends JComponent {
             }
         });
         add(redo);
+    
+        JToggleButton test = new JToggleButton("Test");
+        test.setLocation(400, 300);
+        //test.addActionListener(new ChangeListener());
     }
     public void initChessOnBoard() {
         // todo : 应该会把这个变成接口，读档/新开局两不误
