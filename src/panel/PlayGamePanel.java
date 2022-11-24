@@ -1,13 +1,13 @@
 package panel;
 
 import gameComponent.*;
-import controller.GameController;
 
 import javax.swing.*;
 
 public class PlayGamePanel extends JPanel {
     Chessboard chessboard;
     PlayerStatus playerStatus;
+    OptionalBox optionalBox;
     public PlayGamePanel() {
         setLayout(null);
 
@@ -16,5 +16,8 @@ public class PlayGamePanel extends JPanel {
         add(playerStatus);
         chessboard = new Chessboard(playerStatus);
         add(chessboard);
+        optionalBox = new OptionalBox();
+        optionalBox.setLocation(500, 200);
+        add(optionalBox);
     }
 }

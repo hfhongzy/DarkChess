@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class PlayerStatus extends JComponent {
     private static final int WIDTH = 300;
-    private static final int HEIGHT = 600;
+    private static final int HEIGHT = 200;
     int red_score, black_score;
     TeamColor currentColor;
     public PlayerStatus() {

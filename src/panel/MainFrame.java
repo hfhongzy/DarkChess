@@ -14,7 +14,6 @@ public class MainFrame extends JFrame {
 
         setTitle("ChessGame - Demo");
 //        setSize(width, height);
-        setLocationRelativeTo(null); // 窗口居中
 //        setBackground(Color.GREEN); // 背景颜色
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //设置程序关闭按键，如果点击右上方的叉就游戏全部关闭了
         setResizable(false); // 不可调大小
@@ -36,5 +35,6 @@ public class MainFrame extends JFrame {
         ((CardLayout) pane.getLayout()).show(pane, PLAY_GAME_PANEL); // 展示 card
 //        getContentPane();
         pack();
+        setLocationRelativeTo(null); // 窗口居中
     }
 }
