@@ -16,7 +16,7 @@ public class PlayGamePanel extends JPanel {
         add(playerStatus);
         chessboard = new Chessboard(playerStatus);
         add(chessboard);
-        optionalBox = new OptionalBox();
+        optionalBox = new OptionalBox(chessboard);
         optionalBox.setLocation(500, 200);
         add(optionalBox);
     }

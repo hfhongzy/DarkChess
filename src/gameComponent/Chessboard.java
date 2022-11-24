@@ -26,8 +26,8 @@ public class Chessboard extends JComponent {
     private static final int SIDEBOX_WIDTH = 110;
     private static final int TOP_SPACING_LENGTH = 20;
     PlayerStatus playerStatus;
-    UndoButton undo;
-    RedoButton redo;
+//    UndoButton undo;
+//    RedoButton redo;
     public Chessboard(PlayerStatus playerStatus) {
         setLayout(null);
         setSize(WIDTH, HEIGHT);
@@ -36,8 +36,9 @@ public class Chessboard extends JComponent {
         chessSteps = new ArrayList<ChessStep>();
         initChessOnBoard();
         putChessOnBoard();
-        initButtons();
+//        initButtons();
     }
+    /*
     public void initButtons() {
         undo = new UndoButton(40, 20);
         undo.setLocation(400, 500);
@@ -74,6 +75,7 @@ public class Chessboard extends JComponent {
         test.setLocation(400, 300);
         //test.addActionListener(new ChangeListener());
     }
+    */
     public void initChessOnBoard() {
         // todo : 应该会把这个变成接口，读档/新开局两不误
         ArrayList<ChessComponent> chess = new ArrayList<>(); // 生成棋子列表
@@ -142,6 +144,8 @@ public class Chessboard extends JComponent {
         g2.setStroke(new BasicStroke(2f));
         g2.drawRect(SIDEBOX_WIDTH, TOP_SPACING_LENGTH, 4 * CHESS_WIDTH, 8 * CHESS_WIDTH);
     }
+    
+     */
     /*
     boolean checkMoveTo(boolean isCannon, ChessComponent chess) {
         return chess.isEaten() || (isCannon || !chess.isReversal()) && chess.getTeamColor() != playerStatus.currentColor;
@@ -204,9 +208,10 @@ public class Chessboard extends JComponent {
     }
     void checkWin() {
         if(playerStatus.red_score >= 60) {
-        
+            JOptionPane.showMessageDialog(null, "Red Win!");
+            
         } else if(playerStatus.black_score >= 60) {
-        
+            JOptionPane.showMessageDialog(null, "Black Win!");
         }
     }
     void onClick(ChessComponent chess) {
@@ -358,7 +363,7 @@ public class Chessboard extends JComponent {
             exchangePlayer();
         } else {
             chess.setReversal(true);
-            if(current_time == 0) {
+            if(current_time == -1) {
                 playerStatus.setCurrentColor(null);
                 playerStatus.repaint();
             } else {

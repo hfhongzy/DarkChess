@@ -67,7 +67,7 @@ public class GameButton extends JComponent {
         FontMetrics fontMetrics = getFontMetrics(font);
         int deltaWidth = -fontMetrics.stringWidth(name) / 2;
         int deltaHeight = fontMetrics.getAscent() - fontMetrics.getHeight() / 2;
-        g2.setColor(new Color(0x377e7f));
+        g2.setColor(isWorking ? new Color(0x377e7f) : Color.BLACK);
         g2.drawString(name, WIDTH / 2 + deltaWidth, HEIGHT / 2 + deltaHeight);
     }
 }
