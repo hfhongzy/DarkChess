@@ -5,9 +5,14 @@ import model.ChessStep;
 import model.TeamColor;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -176,7 +181,6 @@ public class Chessboard extends JComponent {
     boolean checkFirst(ChessComponent chess) { // 判断 chess 是否可被选中
         return !chess.isEaten() && chess.getTeamColor() == playerStatus.getCurrentColor();
     }
-    
     void checkWin() {
         if (playerStatus.red_score >= 60) {
             JOptionPane.showMessageDialog(null, "Red Win!");
@@ -403,4 +407,73 @@ public class Chessboard extends JComponent {
         }
     }
     
+    //暂时存这里
+    void saveChess() {
+        JFileChooser file = new JFileChooser();
+        file.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".darkchess");
+            }
+            @Override
+            public String getDescription() {
+                return ".darkchess 文件";
+            }
+        });
+        int fres = file.showSaveDialog(null);
+        if(fres == JFileChooser.APPROVE_OPTION) {
+            System.out.println("OK!");
+            System.out.println(file.getSelectedFile());
+            File newFile;
+            if(file.getSelectedFile().getName().toLowerCase().endsWith(".darkchess")) {
+                newFile = file.getSelectedFile();
+            } else {
+                newFile = new File(file.getSelectedFile() + ".darkchess");
+            }
+            try (FileWriter out = new FileWriter(newFile)) {
+                out.write(1234);
+                JOptionPane.showMessageDialog(null, "保存成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        } else if(fres == JFileChooser.CANCEL_OPTION) {
+            JOptionPane.showMessageDialog(null, "保存失败！");
+            return ;
+        }
+    }
+    void loadChess() {
+        JFileChooser file = new JFileChooser();
+        file.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".darkchess");
+            }
+            @Override
+            public String getDescription() {
+                return ".darkchess 文件";
+            }
+        });
+        int fres = file.showOpenDialog(null);
+        if(fres == JFileChooser.APPROVE_OPTION) {
+            System.out.println(file.getSelectedFile());
+            File newFile;
+            if(file.getSelectedFile().getName().toLowerCase().endsWith(".darkchess")) {
+                newFile = file.getSelectedFile();
+            } else {
+                JOptionPane.showMessageDialog(null, "读档失败。错误编码 101：文件后缀名错误。");
+                return ;
+            }
+            try (FileReader in = new FileReader(newFile)) {
+            
+//                JOptionPane.showMessageDialog(null, "成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        } else if(fres == JFileChooser.CANCEL_OPTION) {
+            JOptionPane.showMessageDialog(null, "读档失败！");
+            return ;
+        }
+    }
 }

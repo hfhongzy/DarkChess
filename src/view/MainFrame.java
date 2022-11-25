@@ -11,7 +11,7 @@ public class MainFrame extends JFrame {
     public MainFrame(int width, int height) {
         WIDTH = width;
         HEIGHT = height;
-
+        
         setTitle("ChessGame - Demo");
 //        setSize(width, height);
 //        setBackground(Color.GREEN); // 背景颜色

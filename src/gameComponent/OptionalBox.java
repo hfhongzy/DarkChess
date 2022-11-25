@@ -9,6 +9,7 @@ public class OptionalBox extends JComponent {
     static final int HEIGHT = 400;
     Chessboard chessboard;
     GameButton undoButton, redoButton, cheatButton;
+    GameButton saveButton, loadButton;
     public OptionalBox(Chessboard chessboard) {
         setSize(WIDTH, HEIGHT);
 
@@ -22,5 +23,11 @@ public class OptionalBox extends JComponent {
         cheatButton = new GameButton(70, 40, "透视", true, chessboard::switchCheating);
         cheatButton.setLocation(30, 90);
         add(cheatButton);
+        saveButton = new GameButton(70, 40, "存档", true, chessboard::saveChess);
+        saveButton.setLocation(30, 140);
+        add(saveButton);
+        loadButton = new GameButton(70, 40, "读档", true, chessboard::loadChess);
+        loadButton.setLocation(150, 140);
+        add(loadButton);
     }
 }
