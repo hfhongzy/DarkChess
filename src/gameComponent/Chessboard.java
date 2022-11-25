@@ -30,7 +30,7 @@ public class Chessboard extends JComponent {
         this.playerStatus = playerStatus;
         current_time = -1;
         chessSteps = new ArrayList<ChessStep>();
-        isCheating = false;
+//        isCheating = false;
         initChessOnBoard();
         putChessOnBoard();
 //        initButtons();
@@ -412,10 +412,10 @@ public class Chessboard extends JComponent {
         flipBuiltin(chess);
     }
     
-    private boolean isCheating;
+//    private boolean isCheating;
     
     void switchCheating() {
-        isCheating = !isCheating;
+//        isCheating = !isCheating;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 4; j++) {
                 chessComponents[i][j].switchCheating();

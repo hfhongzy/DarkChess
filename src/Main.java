@@ -1,4 +1,4 @@
-import panel.MainFrame;
+import view.MainFrame;
 
 import javax.swing.*;
 

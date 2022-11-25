@@ -99,11 +99,11 @@ public abstract class ChessComponent extends JComponent {
                 g2.setColor(new Color(191, 255, 191));
             else
                 g2.setColor(new Color(223,63,63));
-            g2.fillRect(1, 1, width - 2, width - 2);
+            g2.fillRect(1, 1, width - 1, width - 1);
         }
         if (!isEaten) {
             int alpha = isCheating && isReversal ? 100 : 255; //Cheating 模式下的透明度
-            g2.setColor(new Color(255, 200, 0, alpha));
+            g2.setColor(isCheating && isReversal ? new Color(0xf4df91) : Color.ORANGE); // Cheating 模式下的棋子淡化
             g2.fillOval(spacingLength, spacingLength, width - 2 * spacingLength, width - 2 * spacingLength);
             g2.setStroke(new BasicStroke(2f));
             g2.setColor(Color.BLACK);

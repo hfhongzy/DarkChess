@@ -23,46 +23,57 @@ public class GameButton extends JComponent {
         this.gameButtonEvent = gameButtonEvent;
         this.isWorking = isWorking;
         setSize(WIDTH, HEIGHT);
-        if (isWorking) {
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    isPressed = true;
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                isPressed = true;
+                if (isWorking)
                     repaint();
-                }
+            }
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    isPressed = false;
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                isPressed = false;
+                if (isWorking) {
                     int X = e.getX(), Y = e.getY();
                     if (X >= 0 && X <= getWidth() && Y >= 0 && Y <= getHeight())
                         gameButtonEvent.onClick();
                     repaint();
                 }
+            }
 
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    isEnter = true;
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                isEnter = true;
+                if (isWorking) {
                     repaint();
                 }
+            }
 
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    isEnter = false;
+            @Override
+            public void mouseExited(MouseEvent e) {
+                isEnter = false;
+                if (isWorking) {
                     repaint();
                 }
-            });
-        }
+            }
+        });
     }
+
+    public void setWorking(boolean working) {
+        isWorking = working;
+        repaint();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(new Color(0x377e7f));
         g2.fillRect(2, 2, WIDTH - 2, HEIGHT - 2);
-        g2.setColor(isPressed ? Color.LIGHT_GRAY : Color.WHITE);
+        g2.setColor(isWorking && isPressed ? Color.LIGHT_GRAY : Color.WHITE);
         g2.fillRect(0, 0, WIDTH - 2, HEIGHT - 2);
-        Font font = isEnter ? BUTTON_BOLD_FONT : BUTTON_FONT;
+        Font font = isWorking && isEnter ? BUTTON_BOLD_FONT : BUTTON_FONT;
         g2.setFont(font);
         FontMetrics fontMetrics = getFontMetrics(font);
         int deltaWidth = -fontMetrics.stringWidth(name) / 2;

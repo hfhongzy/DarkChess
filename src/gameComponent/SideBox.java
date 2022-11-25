@@ -4,6 +4,7 @@ import chessComponent.*;
 import model.TeamColor;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class SideBox extends JComponent {
     ChessComponent[] chessList = new ChessComponent[7];
@@ -25,18 +26,6 @@ public class SideBox extends JComponent {
             chessList[i].setLocation(LEFT_SPACING, TOP_SPACING + i * CHESS_WIDTH);
             add(chessList[i]);
         }
-        /*
-        teamColor = color;
-        eatenList = new ArrayList<SideBoxChessComponent>();
-        int mid = WIDTH / 2 - Chessboard.CHESS_WIDTH / 2;
-        for(int i = 0; i < 7; i ++) {
-            SideBoxChessComponent chess = new SideBoxChessComponent(color, Chessboard.CHESS_WIDTH);
-            chess.setLocation(mid, Chessboard.TOP_SPACING_LENGTH + i * Chessboard.CHESS_WIDTH);
-            chess.setReversal(false);
-            eatenList.add(chess);
-            add(chess);
-        }
-        */
         setSize(width, height);
         setVisible(true);
     }
