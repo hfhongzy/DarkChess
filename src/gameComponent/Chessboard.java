@@ -21,7 +21,11 @@ public class Chessboard extends JComponent {
     private static final int SIDEBOX_WIDTH = 110;
     public static final int TOP_SPACING_LENGTH = 20;
     PlayerStatus playerStatus;
-    
+    OptionalBox optionalBox;
+    public void setOptionalBox(OptionalBox optionalBox) {
+        this.optionalBox = optionalBox;
+    }
+
     //    UndoButton undo;
 //    RedoButton redo;
     public Chessboard(PlayerStatus playerStatus) {
@@ -29,11 +33,9 @@ public class Chessboard extends JComponent {
         setSize(WIDTH, HEIGHT);
         this.playerStatus = playerStatus;
         current_time = -1;
-        chessSteps = new ArrayList<ChessStep>();
-//        isCheating = false;
+        chessSteps = new ArrayList<>();
         initChessOnBoard();
         putChessOnBoard();
-//        initButtons();
         initSideBoxs();
     }
     public void initSideBoxs() {
@@ -44,44 +46,6 @@ public class Chessboard extends JComponent {
         add(leftSide);
         add(rightSide);
     }
-    /*
-    public void initButtons() {
-        undo = new UndoButton(40, 20);
-        undo.setLocation(400, 500);
-        undo.addMouseListener(new MouseAdapter() {
-            boolean isPressed = false;
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (isPressed) undo();
-                isPressed = false;
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-                isPressed = true;
-            }
-        });
-        add(undo); //?
-        redo = new RedoButton(40, 20);
-        redo.setLocation(400, 400);
-        redo.addMouseListener(new MouseAdapter() {
-            boolean isPressed = false;
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (isPressed) redo();
-                isPressed = false;
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-                isPressed = true;
-            }
-        });
-        add(redo);
-    
-        JToggleButton test = new JToggleButton("Test");
-        test.setLocation(400, 300);
-        //test.addActionListener(new ChangeListener());
-    }
-    */
     public void initChessOnBoard() {
         // todo : 应该会把这个变成接口，读档/新开局两不误
         ArrayList<ChessComponent> chess = new ArrayList<>(); // 生成棋子列表
@@ -106,11 +70,9 @@ public class Chessboard extends JComponent {
             chessComponent.setLocation(SIDEBOX_WIDTH + y * CHESS_WIDTH, TOP_SPACING_LENGTH + x * CHESS_WIDTH);
             chessComponent.addMouseListener(new MouseAdapter() {
                 boolean isPressed = false;
-    
                 boolean isOnChess(int X, int Y) {
                     return 2 * Math.sqrt((X - CHESS_WIDTH / 2.0) * (X - CHESS_WIDTH / 2.0) + (Y - CHESS_WIDTH / 2.0) * (Y - CHESS_WIDTH / 2.0)) <= CHESS_WIDTH;
                 }
-    
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (isPressed && isOnChess(e.getX(), e.getY()))
@@ -291,8 +253,10 @@ public class Chessboard extends JComponent {
             first.repaint();
             setReachableChess(first, false);
         }
+        /*
         if (current_time == -1)
             return;
+        */
         current_time--;
         ChessStep opt = chessSteps.get(current_time + 1);
         if (opt.getType() == 1) {
@@ -305,6 +269,10 @@ public class Chessboard extends JComponent {
         opt.getChess1().repaint();
         if (opt.getType() != 1)
             opt.getChess2().repaint();
+        // 判断按钮是否启用或禁用
+        if (current_time == -1)
+            optionalBox.undoButton.setWorking(false);
+        optionalBox.redoButton.setWorking(true);
     }
     
     void redo() {
@@ -313,8 +281,10 @@ public class Chessboard extends JComponent {
             first.repaint();
             setReachableChess(first, false);
         }
+        /*
         if (current_time == chessSteps.size() - 1)
             return;
+        */
         current_time++;
         ChessStep opt = chessSteps.get(current_time);
         if (opt.getType() == 1) {
@@ -327,6 +297,10 @@ public class Chessboard extends JComponent {
         opt.getChess1().repaint();
         if (opt.getType() != 1)
             opt.getChess2().repaint();
+        // 判断按钮是否启用或禁用
+        if (current_time == chessSteps.size() - 1)
+            optionalBox.redoButton.setWorking(false);
+        optionalBox.undoButton.setWorking(true);
     }
     
     //Builtin 是内置函数，用于撤销和重做
@@ -352,6 +326,9 @@ public class Chessboard extends JComponent {
         current_time++;
         moveBuiltin(chess1, chess2);
         modifySteps(new ChessStep(2, chess1, chess2));
+        // 设置按钮启用或禁用
+        optionalBox.undoButton.setWorking(true);
+        optionalBox.redoButton.setWorking(false);
     }
     
     void captureBuiltin(ChessComponent chess1, ChessComponent chess2) {
@@ -386,6 +363,9 @@ public class Chessboard extends JComponent {
         current_time++;
         modifySteps(new ChessStep(3, chess1, chess2));
         captureBuiltin(chess1, chess2);
+        // 设置按钮启用或禁用
+        optionalBox.undoButton.setWorking(true);
+        optionalBox.redoButton.setWorking(false);
     }
     
     void flipBuiltin(ChessComponent chess) {
@@ -408,18 +388,17 @@ public class Chessboard extends JComponent {
     void flip(ChessComponent chess) {
         current_time++;
         modifySteps(new ChessStep(1, chess));
-//        System.out.println("Yeah!");
         flipBuiltin(chess);
+        // 设置按钮启用或禁用
+        optionalBox.undoButton.setWorking(true);
+        optionalBox.redoButton.setWorking(false);
     }
-    
-//    private boolean isCheating;
-    
     void switchCheating() {
-//        isCheating = !isCheating;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 4; j++) {
                 chessComponents[i][j].switchCheating();
-                chessComponents[i][j].repaint();
+                if (chessComponents[i][j].isReversal() && !chessComponents[i][j].isEaten())
+                    chessComponents[i][j].repaint();
             }
         }
     }

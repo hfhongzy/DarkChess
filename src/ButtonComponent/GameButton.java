@@ -14,14 +14,14 @@ public class GameButton extends JComponent {
     GameButtonEvent gameButtonEvent;
     private static final Font BUTTON_FONT = new Font("宋体", Font.PLAIN, 18);
     private static final Font BUTTON_BOLD_FONT = new Font("宋体", Font.BOLD, 18);
-    public GameButton(int width, int height, String name, boolean isWorking, GameButtonEvent gameButtonEvent) {
+    public GameButton(int width, int height, String name, boolean working, GameButtonEvent gameButtonEvent) {
         WIDTH = width;
         HEIGHT = height;
         isEnter = false;
         isPressed = false;
         this.name = name;
         this.gameButtonEvent = gameButtonEvent;
-        this.isWorking = isWorking;
+        isWorking = working;
         setSize(WIDTH, HEIGHT);
         addMouseListener(new MouseAdapter() {
             @Override
@@ -69,16 +69,25 @@ public class GameButton extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(new Color(0x377e7f));
-        g2.fillRect(2, 2, WIDTH - 2, HEIGHT - 2);
+        if (isWorking) {
+            g2.setColor(new Color(0x377e7f));
+            g2.fillRect(2, 2, WIDTH - 2, HEIGHT - 2);
+        }
+        else {
+            g2.setColor(Color.GRAY);
+            g2.fillRect(1, 1, WIDTH - 1, HEIGHT - 1);
+        }
         g2.setColor(isWorking && isPressed ? Color.LIGHT_GRAY : Color.WHITE);
-        g2.fillRect(0, 0, WIDTH - 2, HEIGHT - 2);
+        int delta = isWorking && isPressed ? 1 : 0;
+        if (isWorking) {
+            g2.fillRect(delta, delta, WIDTH - 2, HEIGHT - 2);
+        }
         Font font = isWorking && isEnter ? BUTTON_BOLD_FONT : BUTTON_FONT;
         g2.setFont(font);
         FontMetrics fontMetrics = getFontMetrics(font);
         int deltaWidth = -fontMetrics.stringWidth(name) / 2;
         int deltaHeight = fontMetrics.getAscent() - fontMetrics.getHeight() / 2;
         g2.setColor(isWorking ? new Color(0x377e7f) : Color.BLACK);
-        g2.drawString(name, WIDTH / 2 + deltaWidth, HEIGHT / 2 + deltaHeight);
+        g2.drawString(name, WIDTH / 2 + deltaWidth + delta, HEIGHT / 2 + deltaHeight + delta);
     }
 }

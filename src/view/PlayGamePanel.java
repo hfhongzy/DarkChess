@@ -19,5 +19,6 @@ public class PlayGamePanel extends JPanel {
         optionalBox = new OptionalBox(chessboard);
         optionalBox.setLocation(500, 200);
         add(optionalBox);
+        chessboard.setOptionalBox(optionalBox);
     }
 }
