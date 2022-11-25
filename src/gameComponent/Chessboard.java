@@ -1,25 +1,19 @@
 package gameComponent;
 
-import ButtonComponent.RedoButton;
-import ButtonComponent.UndoButton;
 import chessComponent.*;
-import controller.GameController;
 import model.ChessStep;
 import model.TeamColor;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.xml.stream.Location;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Scanner;
 
 public class Chessboard extends JComponent {
     ChessComponent[][] chessComponents = new ChessComponent[8][4];
-    SideBoxComponent leftSide, rightSide; // 展示被吃的棋子 Left == Red
+    SideBox leftSide, rightSide; // 展示被吃的棋子 Left == Red
     ChessComponent first; // = null : 未选中 != null : 选中一个未被eaten的棋子
     public static final int CHESS_WIDTH = 70;
     private static final int WIDTH = 500;
@@ -43,10 +37,10 @@ public class Chessboard extends JComponent {
         initSideBoxs();
     }
     public void initSideBoxs() {
-        leftSide = new SideBoxComponent(SIDEBOX_WIDTH, HEIGHT, TeamColor.RED);
+        leftSide = new SideBox(SIDEBOX_WIDTH, HEIGHT, TeamColor.RED);
         leftSide.setLocation(0, 0);
-        rightSide = new SideBoxComponent(SIDEBOX_WIDTH, HEIGHT, TeamColor.BLACK);
-        rightSide.setLocation(SIDEBOX_WIDTH + 4 * CHESS_WIDTH, 0);
+        rightSide = new SideBox(SIDEBOX_WIDTH, HEIGHT, TeamColor.BLACK);
+        rightSide.setLocation(SIDEBOX_WIDTH + 4 * CHESS_WIDTH, CHESS_WIDTH);
         add(leftSide);
         add(rightSide);
     }
@@ -362,21 +356,30 @@ public class Chessboard extends JComponent {
     
     void captureBuiltin(ChessComponent chess1, ChessComponent chess2) {
         if (chess2.isEaten()) {
-            if (chess2.getTeamColor() == TeamColor.RED)
+            if (chess2.getTeamColor() == TeamColor.RED) {
                 playerStatus.black_score -= chess2.getScore();
-            else
+                leftSide.removeEatenChess(chess2);
+            }
+            else {
                 playerStatus.red_score -= chess2.getScore();
+                rightSide.removeEatenChess(chess2);
+            }
             chess2.setEaten(false);
             moveBuiltin(chess1, chess2);
-            return;
         }
-        if (chess2.getTeamColor() == TeamColor.RED)
-            playerStatus.black_score += chess2.getScore();
-        else
-            playerStatus.red_score += chess2.getScore();
-        chess2.setEaten(true);
-        moveBuiltin(chess1, chess2);
-        checkWin();
+        else {
+            if (chess2.getTeamColor() == TeamColor.RED) {
+                playerStatus.black_score += chess2.getScore();
+                leftSide.addEatenChess(chess2);
+            }
+            else {
+                playerStatus.red_score += chess2.getScore();
+                rightSide.addEatenChess(chess2);
+            }
+            chess2.setEaten(true);
+            moveBuiltin(chess1, chess2);
+            checkWin();
+        }
     }
     
     void capture(ChessComponent chess1, ChessComponent chess2) {
