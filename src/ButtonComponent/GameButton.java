@@ -62,7 +62,7 @@ public class GameButton extends JComponent {
         g2.fillRect(2, 2, WIDTH - 2, HEIGHT - 2);
         g2.setColor(isPressed ? Color.LIGHT_GRAY : Color.WHITE);
         g2.fillRect(0, 0, WIDTH - 2, HEIGHT - 2);
-        Font font =isEnter ? BUTTON_BOLD_FONT : BUTTON_FONT;
+        Font font = isEnter ? BUTTON_BOLD_FONT : BUTTON_FONT;
         g2.setFont(font);
         FontMetrics fontMetrics = getFontMetrics(font);
         int deltaWidth = -fontMetrics.stringWidth(name) / 2;

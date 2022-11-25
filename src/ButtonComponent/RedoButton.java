@@ -1,5 +1,5 @@
 package ButtonComponent;
-
+//Deleted
 import model.TeamColor;
 
 import javax.swing.*;
