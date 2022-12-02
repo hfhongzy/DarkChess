@@ -36,7 +36,7 @@ public class GameButton extends JComponent {
                 isPressed = false;
                 if (isWorking) {
                     int X = e.getX(), Y = e.getY();
-                    if (X >= 0 && X <= getWidth() && Y >= 0 && Y <= getHeight())
+                    if (X >= 0 && X <= getWidth() && Y >= 0 && Y <= getHeight() && gameButtonEvent != null)
                         gameButtonEvent.onClick();
                     repaint();
                 }

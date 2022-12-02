@@ -1,13 +1,14 @@
 package view;
 
+import model.PanelType;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
-    final static String PLAY_GAME_PANEL = "PLAYGAMEPANEL";
     private final int WIDTH;
     private final int HEIGHT;
-    Container pane; // 显示的 panel，用于切换多个页面
+    public Container pane; // 显示的 panel，用于切换多个页面
     public MainFrame(int width, int height) {
         WIDTH = width;
         HEIGHT = height;
@@ -22,19 +23,20 @@ public class MainFrame extends JFrame {
         pane = getContentPane();
         pane.setPreferredSize(new Dimension(width, height));
 
+        // 初始化 panel
+        JPanel mainPanel = new MainPanel(this);
         JPanel playGamePanel = new PlayGamePanel();
-        pane.add(PLAY_GAME_PANEL, playGamePanel); // 名称 - panel
 
-        // card "pj"
-        JPanel pj = new JPanel();
-        JButton j = new JButton("testj");
-        pj.add(j);
-        pane.add("pj", pj);
-        
-        
-        ((CardLayout) pane.getLayout()).show(pane, PLAY_GAME_PANEL); // 展示 card
-//        getContentPane();
+        pane.add(PanelType.MAIN_PANEL, mainPanel);
+        pane.add(PanelType.PLAY_GAME_PANEL, playGamePanel); // 名称 - panel
+
+        showPanel(PanelType.MAIN_PANEL);
+//        ((CardLayout) pane.getLayout()).show(pane, PanelType.MAIN_PANEL); // 展示 card
+
         pack();
         setLocationRelativeTo(null); // 窗口居中
+    }
+    public void showPanel(String panelType) {
+        ((CardLayout) pane.getLayout()).show(pane, panelType);
     }
 }

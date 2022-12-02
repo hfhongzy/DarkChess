@@ -39,6 +39,8 @@ public class Chessboard extends JComponent {
         this.playerStatus = playerStatus;
         current_time = -1;
         chessSteps = new ArrayList<>();
+        fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         initChessOnBoard();
         putChessOnBoard();
         initSideBoxs();
@@ -120,12 +122,7 @@ public class Chessboard extends JComponent {
         g2.setStroke(new BasicStroke(2f));
         g2.drawRect(SIDEBOX_WIDTH, TOP_SPACING_LENGTH, 4 * CHESS_WIDTH, 8 * CHESS_WIDTH);
     }
-    
-    /*
-    boolean checkMoveTo(boolean isCannon, ChessComponent chess) {
-        return chess.isEaten() || (isCannon || !chess.isReversal()) && chess.getTeamColor() != playerStatus.currentColor;
-    }
-    */
+
     boolean checkMoveTo(ChessComponent from, ChessComponent to) {
         if (to.isEaten()) return true;
         if (to.isReversal()) return false;
@@ -181,6 +178,7 @@ public class Chessboard extends JComponent {
     boolean checkFirst(ChessComponent chess) { // 判断 chess 是否可被选中
         return !chess.isEaten() && chess.getTeamColor() == playerStatus.getCurrentColor();
     }
+
     void checkWin() {
         if (playerStatus.red_score >= 60) {
             JOptionPane.showMessageDialog(null, "Red Win!");
@@ -406,11 +404,17 @@ public class Chessboard extends JComponent {
             }
         }
     }
-    
     //暂时存这里
+    JFileChooser fileChooser;
     void saveChess() {
-        JFileChooser file = new JFileChooser();
-        file.setFileFilter(new FileFilter() {
+//        FileDialog fileDialog = new FileDialog();
+//        fileDialog.setVisible(true);
+//        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//        fileChooser.setCurrentDirectory(new File(currentPath));
+//        fileChooser.set
+        fileChooser.setApproveButtonMnemonic(0);
+        fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return f.getName().toLowerCase().endsWith(".darkchess");
@@ -420,15 +424,15 @@ public class Chessboard extends JComponent {
                 return ".darkchess 文件";
             }
         });
-        int fres = file.showSaveDialog(null);
+        int fres = fileChooser.showSaveDialog(null);
         if(fres == JFileChooser.APPROVE_OPTION) {
             System.out.println("OK!");
-            System.out.println(file.getSelectedFile());
+            System.out.println(fileChooser.getSelectedFile());
             File newFile;
-            if(file.getSelectedFile().getName().toLowerCase().endsWith(".darkchess")) {
-                newFile = file.getSelectedFile();
+            if(fileChooser.getSelectedFile().getName().toLowerCase().endsWith(".darkchess")) {
+                newFile = fileChooser.getSelectedFile();
             } else {
-                newFile = new File(file.getSelectedFile() + ".darkchess");
+                newFile = new File(fileChooser.getSelectedFile() + ".darkchess");
             }
             try (FileWriter out = new FileWriter(newFile)) {
                 out.write(1234);
@@ -443,8 +447,8 @@ public class Chessboard extends JComponent {
         }
     }
     void loadChess() {
-        JFileChooser file = new JFileChooser();
-        file.setFileFilter(new FileFilter() {
+//        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return f.getName().toLowerCase().endsWith(".darkchess");
@@ -454,12 +458,12 @@ public class Chessboard extends JComponent {
                 return ".darkchess 文件";
             }
         });
-        int fres = file.showOpenDialog(null);
+        int fres = fileChooser.showOpenDialog(null);
         if(fres == JFileChooser.APPROVE_OPTION) {
-            System.out.println(file.getSelectedFile());
+            System.out.println(fileChooser.getSelectedFile());
             File newFile;
-            if(file.getSelectedFile().getName().toLowerCase().endsWith(".darkchess")) {
-                newFile = file.getSelectedFile();
+            if(fileChooser.getSelectedFile().getName().toLowerCase().endsWith(".darkchess")) {
+                newFile = fileChooser.getSelectedFile();
             } else {
                 JOptionPane.showMessageDialog(null, "读档失败。错误编码 101：文件后缀名错误。");
                 return ;
