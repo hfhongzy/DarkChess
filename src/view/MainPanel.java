@@ -1,9 +1,9 @@
 package view;
 
-import ButtonComponent.GameButton;
-import LabelComponent.GameLabel;
-import LabelComponent.TextBlock;
-import RadioButtonComponent.GameRadioButton;
+import buttonComponent.GameButton;
+import labelComponent.GameLabel;
+import labelComponent.TextBlock;
+import radioButtonComponent.GameRadioButton;
 import model.PanelType;
 
 import javax.swing.*;

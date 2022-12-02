@@ -1,4 +1,4 @@
-package RadioButtonComponent;
+package radioButtonComponent;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package ButtonComponent;
+package buttonComponent;
 
 public interface GameButtonEvent {
     void onClick();

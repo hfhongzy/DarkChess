@@ -1,6 +1,6 @@
 package gameComponent;
 
-import ButtonComponent.GameButton;
+import buttonComponent.GameButton;
 
 import javax.swing.*;
 

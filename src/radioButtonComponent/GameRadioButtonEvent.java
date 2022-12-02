@@ -1,4 +1,4 @@
-package RadioButtonComponent;
+package radioButtonComponent;
 
 public interface GameRadioButtonEvent {
     void selectClick();

@@ -1,10 +1,9 @@
-package LabelComponent;
+package labelComponent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class GameLabel extends JComponent {
     ArrayList<TextBlock> textBlocks;
