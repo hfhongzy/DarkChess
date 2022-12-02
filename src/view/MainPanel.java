@@ -3,6 +3,7 @@ package view;
 import ButtonComponent.GameButton;
 import LabelComponent.GameLabel;
 import LabelComponent.TextBlock;
+import RadioButtonComponent.GameRadioButton;
 import model.PanelType;
 
 import javax.swing.*;
@@ -25,5 +26,9 @@ public class MainPanel extends JPanel {
         GameLabel label = new GameLabel(new TextBlock("L", 40), new TextBlock("iu_AK", Color.RED, 20));
         label.setLocation(10, 10);
         add(label);
+
+        GameRadioButton rb = new GameRadioButton(100, 50, "aaa", false, null);
+        rb.setLocation(450, 50);
+        add(rb);
     }
 }
