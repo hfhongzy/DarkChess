@@ -1,4 +1,4 @@
-package ButtonComponent;
+package buttonComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,10 +8,9 @@ import java.awt.event.MouseEvent;
 public class GameButton extends JComponent {
     final int WIDTH, HEIGHT;
     String name;
-    boolean isEnter;
-    boolean isPressed;
+    private boolean isEnter;
+    private boolean isPressed;
     boolean isWorking;
-    GameButtonEvent gameButtonEvent;
     private static final Font BUTTON_FONT = new Font("宋体", Font.PLAIN, 18);
     private static final Font BUTTON_BOLD_FONT = new Font("宋体", Font.BOLD, 18);
     public GameButton(int width, int height, String name, boolean working, GameButtonEvent gameButtonEvent) {
@@ -20,7 +19,6 @@ public class GameButton extends JComponent {
         isEnter = false;
         isPressed = false;
         this.name = name;
-        this.gameButtonEvent = gameButtonEvent;
         isWorking = working;
         setSize(WIDTH, HEIGHT);
         addMouseListener(new MouseAdapter() {
@@ -30,7 +28,6 @@ public class GameButton extends JComponent {
                 if (isWorking)
                     repaint();
             }
-
             @Override
             public void mouseReleased(MouseEvent e) {
                 isPressed = false;
@@ -41,7 +38,6 @@ public class GameButton extends JComponent {
                     repaint();
                 }
             }
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 isEnter = true;
@@ -49,7 +45,6 @@ public class GameButton extends JComponent {
                     repaint();
                 }
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 isEnter = false;

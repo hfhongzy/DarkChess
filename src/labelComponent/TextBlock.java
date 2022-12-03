@@ -1,4 +1,4 @@
-package LabelComponent;
+package labelComponent;
 
 import java.awt.*;
 
