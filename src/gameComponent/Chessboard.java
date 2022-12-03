@@ -262,15 +262,15 @@ public class Chessboard extends JComponent {
         current_time--;
         ChessStep opt = chessSteps.get(current_time + 1);
         if (opt.getType() == 1) {
-            flipBuiltin(opt.getChess1());
+            flipBuiltin(chessComponents[opt.x1][opt.y1]);
         } else if (opt.getType() == 2) {
-            moveBuiltin(opt.getChess1(), opt.getChess2());
+            moveBuiltin(chessComponents[opt.x2][opt.y2], chessComponents[opt.x1][opt.y1]);
         } else {
-            captureBuiltin(opt.getChess1(), opt.getChess2());
+            captureBuiltin(chessComponents[opt.x2][opt.y2], chessComponents[opt.x1][opt.y1]);
         }
-        opt.getChess1().repaint();
+        chessComponents[opt.x1][opt.y1].repaint();
         if (opt.getType() != 1)
-            opt.getChess2().repaint();
+            chessComponents[opt.x2][opt.y2].repaint();
         // 判断按钮是否启用或禁用
         if (current_time == -1)
             optionalBox.undoButton.setWorking(false);
@@ -283,26 +283,27 @@ public class Chessboard extends JComponent {
             first.repaint();
             setReachableChess(first, false);
         }
-        /*
+        
         if (current_time == chessSteps.size() - 1)
             return;
-        */
+        
         current_time++;
         ChessStep opt = chessSteps.get(current_time);
         if (opt.getType() == 1) {
-            flipBuiltin(opt.getChess1());
+            flipBuiltin(chessComponents[opt.x1][opt.y1]);
         } else if (opt.getType() == 2) {
-            moveBuiltin(opt.getChess1(), opt.getChess2());
+            moveBuiltin(chessComponents[opt.x1][opt.y1], chessComponents[opt.x2][opt.y2]);
         } else {
-            captureBuiltin(opt.getChess1(), opt.getChess2());
+            captureBuiltin(chessComponents[opt.x1][opt.y1], chessComponents[opt.x2][opt.y2]);
         }
-        opt.getChess1().repaint();
+        chessComponents[opt.x1][opt.y1].repaint();
         if (opt.getType() != 1)
-            opt.getChess2().repaint();
+            chessComponents[opt.x2][opt.y2].repaint();
         // 判断按钮是否启用或禁用
         if (current_time == chessSteps.size() - 1)
             optionalBox.redoButton.setWorking(false);
         optionalBox.undoButton.setWorking(true);
+        
     }
     
     //Builtin 是内置函数，用于撤销和重做
@@ -326,8 +327,9 @@ public class Chessboard extends JComponent {
     
     void move(ChessComponent chess1, ChessComponent chess2) {
         current_time++;
+        modifySteps(new ChessStep(2, chess1.X(), chess1.Y(), chess2.X(), chess2.Y()));
         moveBuiltin(chess1, chess2);
-        modifySteps(new ChessStep(2, chess1, chess2));
+        
         // 设置按钮启用或禁用
         optionalBox.undoButton.setWorking(true);
         optionalBox.redoButton.setWorking(false);
@@ -363,7 +365,7 @@ public class Chessboard extends JComponent {
     
     void capture(ChessComponent chess1, ChessComponent chess2) {
         current_time++;
-        modifySteps(new ChessStep(3, chess1, chess2));
+        modifySteps(new ChessStep(3, chess1.X(), chess1.Y(), chess2.X(), chess2.Y()));
         captureBuiltin(chess1, chess2);
         // 设置按钮启用或禁用
         optionalBox.undoButton.setWorking(true);
@@ -389,7 +391,7 @@ public class Chessboard extends JComponent {
     
     void flip(ChessComponent chess) {
         current_time++;
-        modifySteps(new ChessStep(1, chess));
+        modifySteps(new ChessStep(1, chess.X(), chess.Y()));
         flipBuiltin(chess);
         // 设置按钮启用或禁用
         optionalBox.undoButton.setWorking(true);
@@ -435,7 +437,27 @@ public class Chessboard extends JComponent {
                 newFile = new File(fileChooser.getSelectedFile() + ".darkchess");
             }
             try (FileWriter out = new FileWriter(newFile)) {
-                out.write(1234);
+                //格式
+                // 8*4 B0~B6 R0~R6 初始棋盘
+                // Black/Red
+                // n
+                // 1 x y
+                // 2 a b x y
+                for(int i = 0; i < 8; i ++) {
+                    for (int j = 0; j < 4; j++) {
+                        out.write((chessComponents[i][j].getTeamColor() == TeamColor.BLACK ? "B" : "R") + chessComponents[i][j].getID());
+                        out.write(' ');
+                    }
+                    out.write('\n');
+                }
+                out.write(playerStatus.getCurrentColor() == TeamColor.BLACK ? "B" : "R");
+                out.write('\n');
+                out.write(chessSteps.size() + "\n");
+                for(ChessStep step : chessSteps) {
+                    out.write(step.toString());
+                    out.write('\n');
+                }
+                out.flush();
                 JOptionPane.showMessageDialog(null, "保存成功！");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -479,5 +501,8 @@ public class Chessboard extends JComponent {
             JOptionPane.showMessageDialog(null, "读档失败！");
             return ;
         }
+        /*
+        * 1
+        * */
     }
 }
