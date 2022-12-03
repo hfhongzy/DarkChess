@@ -38,8 +38,8 @@ public class Chessboard extends JComponent {
         chessSteps = new ArrayList<>();
         fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        initSideBoxs();
         initChessOnBoard();
-        
     }
     public void initSideBoxs() {
         leftSide = new SideBox(SIDEBOX_WIDTH, HEIGHT, TeamColor.RED);
@@ -49,11 +49,15 @@ public class Chessboard extends JComponent {
         add(leftSide);
         add(rightSide);
     }
+    /**
+     * 将一个 Arraylist 中的棋子放到棋盘上，并删除之前的棋盘、清空 SideBox。
+     */
     public void rebuild(ArrayList<ChessComponent> chess) {
         current_time = -1;
         chessSteps.clear();
         leftSide.clear();
         rightSide.clear();
+        playerStatus.clear();
         putChessAwayBoard();
         for (int i = 0; i < chess.size(); i++) { // 放到棋盘上
             int x = i / 4, y = i % 4;
@@ -99,7 +103,6 @@ public class Chessboard extends JComponent {
                 chess.add(new SoldierChessComponent(color, CHESS_WIDTH));
         }
         Collections.shuffle(chess); // 随机打乱棋子
-        initSideBoxs();
         rebuild(chess);
     }
     
@@ -589,5 +592,8 @@ public class Chessboard extends JComponent {
         /*
         * 1
         * */
+    }
+    void restart() {
+        initChessOnBoard();
     }
 }

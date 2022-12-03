@@ -17,8 +17,11 @@ public class PlayerStatus extends JComponent {
         currentColor = null;
         red_score = black_score = 0;
     }
-
-    public TeamColor getCurrentColor() {
+    void clear() {
+        red_score = black_score = 0;
+        currentColor = null;
+    }
+     public TeamColor getCurrentColor() {
         return currentColor;
     }
 
