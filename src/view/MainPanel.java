@@ -10,25 +10,32 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainPanel extends JPanel {
-    MainFrame mainFrame;
     public MainPanel(MainFrame mainFrame) {
         setLayout(null);
-        this.mainFrame = mainFrame;
-        GameButton btn1 = new GameButton(100, 40, "aaa", true, () -> {
-//            mainFrame.playGamePanel.xxx
-            mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
-        });
-        GameButton btn2 = new GameButton(100, 40, "___", false, null);
-        btn1.setLocation(300, 100);
-        btn2.setLocation(500, 100);
-        add(btn1);
-        add(btn2);
-        GameLabel label = new GameLabel(new TextBlock("L", 40), new TextBlock("iu_AK", Color.RED, 20));
-        label.setLocation(10, 10);
-        add(label);
 
-        GameRadioButton rb = new GameRadioButton(100, 50, "aaa", false, null);
-        rb.setLocation(450, 50);
-        add(rb);
+        GameLabel title = new GameLabel(new TextBlock("翻棋", 50), new TextBlock("v1.0", Color.RED, 30));
+        title.setLocation(400 - title.getWidth() / 2, 80);
+        add(title);
+
+        GameButton singlePlayerButton = new GameButton(200, 40, "单人模式", true, () -> {});
+        singlePlayerButton.setLocation(300, 200);
+        add(singlePlayerButton);
+
+        GameButton doublePlayerButton = new GameButton(200, 40, "双人模式", true, () -> mainFrame.showPanel(PanelType.DOUBLE_PLAYER_PANEL));
+        doublePlayerButton.setLocation(300, 280);
+        add(doublePlayerButton);
+
+        GameButton aboutButton = new GameButton(200, 40, "关于我们", true, () -> {
+            JOptionPane.showMessageDialog(null, "制作人：wa-evil, hongzy\n版本号：v1.0", null, JOptionPane.INFORMATION_MESSAGE);
+        });
+        aboutButton.setLocation(300, 360);
+        add(aboutButton);
+
+        GameButton exitButton = new GameButton(200, 40, "退出游戏", true, () -> {
+            if (JOptionPane.showConfirmDialog(null, "你真的要退出吗？", null, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+                System.exit(0);
+        });
+        exitButton.setLocation(300, 440);
+        add(exitButton);
     }
 }
