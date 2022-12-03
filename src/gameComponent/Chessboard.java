@@ -9,10 +9,7 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -42,8 +39,7 @@ public class Chessboard extends JComponent {
         fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         initChessOnBoard();
-        putChessOnBoard();
-        initSideBoxs();
+        
     }
     public void initSideBoxs() {
         leftSide = new SideBox(SIDEBOX_WIDTH, HEIGHT, TeamColor.RED);
@@ -52,6 +48,40 @@ public class Chessboard extends JComponent {
         rightSide.setLocation(SIDEBOX_WIDTH + 4 * CHESS_WIDTH, CHESS_WIDTH);
         add(leftSide);
         add(rightSide);
+    }
+    public void rebuild(ArrayList<ChessComponent> chess) {
+        current_time = -1;
+        chessSteps.clear();
+        leftSide.clear();
+        rightSide.clear();
+        putChessAwayBoard();
+        for (int i = 0; i < chess.size(); i++) { // 放到棋盘上
+            int x = i / 4, y = i % 4;
+            ChessComponent chessComponent = chess.get(i);
+            chessComponent.setX(x);
+            chessComponent.setY(y);
+            chessComponent.setLocation(SIDEBOX_WIDTH + y * CHESS_WIDTH, TOP_SPACING_LENGTH + x * CHESS_WIDTH);
+            chessComponent.addMouseListener(new MouseAdapter() {
+                boolean isPressed = false;
+                boolean isOnChess(int X, int Y) {
+                    return 2 * Math.sqrt((X - CHESS_WIDTH / 2.0) * (X - CHESS_WIDTH / 2.0) + (Y - CHESS_WIDTH / 2.0) * (Y - CHESS_WIDTH / 2.0)) <= CHESS_WIDTH;
+                }
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    if (isPressed && isOnChess(e.getX(), e.getY()))
+                        onClick(chessComponent);
+                    isPressed = false;
+                }
+            
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if (isOnChess(e.getX(), e.getY()))
+                        isPressed = true;
+                }
+            });
+            chessComponents[x][y] = chessComponent;
+        }
+        putChessOnBoard();
     }
     public void initChessOnBoard() {
         // todo : 应该会把这个变成接口，读档/新开局两不误
@@ -69,34 +99,19 @@ public class Chessboard extends JComponent {
                 chess.add(new SoldierChessComponent(color, CHESS_WIDTH));
         }
         Collections.shuffle(chess); // 随机打乱棋子
-        for (int i = 0; i < chess.size(); i++) { // 放到棋盘上
-            int x = i % 8, y = i / 8;
-            ChessComponent chessComponent = chess.get(i);
-            chessComponent.setX(x);
-            chessComponent.setY(y);
-            chessComponent.setLocation(SIDEBOX_WIDTH + y * CHESS_WIDTH, TOP_SPACING_LENGTH + x * CHESS_WIDTH);
-            chessComponent.addMouseListener(new MouseAdapter() {
-                boolean isPressed = false;
-                boolean isOnChess(int X, int Y) {
-                    return 2 * Math.sqrt((X - CHESS_WIDTH / 2.0) * (X - CHESS_WIDTH / 2.0) + (Y - CHESS_WIDTH / 2.0) * (Y - CHESS_WIDTH / 2.0)) <= CHESS_WIDTH;
-                }
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (isPressed && isOnChess(e.getX(), e.getY()))
-                        onClick(chessComponent);
-                    isPressed = false;
-                }
-    
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    if (isOnChess(e.getX(), e.getY()))
-                        isPressed = true;
-                }
-            });
-            chessComponents[x][y] = chessComponent;
-        }
+        initSideBoxs();
+        rebuild(chess);
     }
     
+    public void putChessAwayBoard() {
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 4; j++)
+                if(chessComponents[i][j] != null) {
+                    chessComponents[i][j].setVisible(false);
+                    chessComponents[i][j].repaint();
+                    remove(chessComponents[i][j]);
+                }
+    }
     public void putChessOnBoard() {
         for (int i = 0; i < 8; i++)
             for (int j = 0; j < 4; j++)
@@ -255,10 +270,10 @@ public class Chessboard extends JComponent {
             first.repaint();
             setReachableChess(first, false);
         }
-        /*
+        
         if (current_time == -1)
             return;
-        */
+        
         current_time--;
         ChessStep opt = chessSteps.get(current_time + 1);
         if (opt.getType() == 1) {
@@ -444,6 +459,8 @@ public class Chessboard extends JComponent {
                 // 1 x y
                 // 2 a b x y
                 //tql
+                for(int i = 0; i < chessSteps.size(); i ++)
+                    undo();
                 for(int i = 0; i < 8; i ++) {
                     for (int j = 0; j < 4; j++) {
                         out.write((chessComponents[i][j].getTeamColor() == TeamColor.BLACK ? "B" : "R") + chessComponents[i][j].getID());
@@ -451,6 +468,8 @@ public class Chessboard extends JComponent {
                     }
                     out.write('\n');
                 }
+                for(int i = 0; i < chessSteps.size(); i ++)
+                    redo();
                 out.write(playerStatus.getCurrentColor() == TeamColor.BLACK ? "B" : "R");
                 out.write('\n');
                 out.write(chessSteps.size() + "\n");
@@ -492,8 +511,73 @@ public class Chessboard extends JComponent {
                 return ;
             }
             try (FileReader in = new FileReader(newFile)) {
-            
-//                JOptionPane.showMessageDialog(null, "成功！");
+                BufferedReader buffIn = new BufferedReader(in);
+                ArrayList<ChessComponent> chessList = new ArrayList<>();
+                for(int x = 0; x < 8; x ++) {
+                    String s = buffIn.readLine();
+                    if(s == null) break;
+                    s = s.trim();
+                    String [] s0 = s.split(" ");
+                    if(s0.length != 4) {
+                        JOptionPane.showMessageDialog(null, "读档失败。错误编码 102：棋盘错误。");
+                        return ;
+                    }
+                    for(int y = 0; y < 4; y ++) {
+                        if(s0[y].length() != 2 || !Character.isUpperCase(s0[y].charAt(0)) || !Character.isDigit(s0[y].charAt(1))) {
+                            JOptionPane.showMessageDialog(null, "读档失败。错误编码 103：棋子错误。");
+                            return ;
+                        }
+                        char c = s0[y].charAt(0);
+                        int id = s0[y].charAt(1) - '0';
+                        if(id == 0)
+                            chessList.add(new GeneralChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                        if(id == 1)
+                            chessList.add(new AdvisorChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                        if(id == 2)
+                            chessList.add(new MinisterChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                        if(id == 3)
+                            chessList.add(new ChariotChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                        if(id == 4)
+                            chessList.add(new HorseChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                        if(id == 5)
+                            chessList.add(new SoldierChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                        if(id == 6)
+                            chessList.add(new CannonChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                    }
+                    
+                }
+                rebuild(chessList);
+                buffIn.readLine();
+                int n = Integer.parseInt(buffIn.readLine());
+                for(int i = 0; i < n; i ++) {
+                    String s = buffIn.readLine();
+                    if(s == null) break;
+                    s = s.trim();
+                    String [] s0 = s.split(" ");
+                    if(s0.length != 5) {
+                        JOptionPane.showMessageDialog(null, "读档失败。错误编码 105：行棋步骤错误。");
+                        return ;
+                    }
+                    for(int j = 0; j < 5; j ++)
+                        if(s0[j].length() != 1 || !Character.isDigit(s0[j].charAt(0))) {
+                            JOptionPane.showMessageDialog(null, "读档失败。错误编码 105：行棋步骤错误。");
+                            return ;
+                        }
+                    int x1 = s0[1].charAt(0) - '0';
+                    int y1 = s0[2].charAt(0) - '0';
+                    int x2 = s0[3].charAt(0) - '0';
+                    int y2 = s0[4].charAt(0) - '0';
+                    
+                    if(s0[0].charAt(0) == '1') {
+                        flip(chessComponents[x1][y1]);
+                    } else if(s0[0].charAt(0) == '2') {
+                        move(chessComponents[x1][y1], chessComponents[x2][y2]);
+                    } else {
+                        capture(chessComponents[x1][y1], chessComponents[x2][y2]);
+                    }
+                }
+                
+                JOptionPane.showMessageDialog(null, "读档成功！");
             } catch (Exception e) {
                 e.printStackTrace();
             }

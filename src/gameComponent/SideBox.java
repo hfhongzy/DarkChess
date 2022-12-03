@@ -39,4 +39,10 @@ public class SideBox extends JComponent {
         chessList[ID].addCount(-1);
         chessList[ID].repaint();
     }
+    public void clear() {
+        for(int i = 0; i < 7; i ++) {
+            chessList[i].clearCount();
+            chessList[i].repaint();
+        }
+    }
 }

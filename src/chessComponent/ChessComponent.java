@@ -24,7 +24,11 @@ public abstract class ChessComponent extends JComponent {
     protected String name;
     int ID;
     final int score;
-
+    
+    public void clearCount() {
+        count = 0;
+    }
+    
     public int getID() {
         return ID;
     }
