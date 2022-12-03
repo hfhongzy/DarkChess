@@ -5,7 +5,7 @@ import chessComponent.ChessComponent;
 public class ChessStep {
     public int type;
     public int x1, y1, x2, y2;
-
+    //orz
     public ChessStep(int type, int x1, int y1) {
         this.type = type;
         this.x1 = x1;

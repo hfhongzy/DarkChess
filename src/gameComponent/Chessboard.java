@@ -443,6 +443,7 @@ public class Chessboard extends JComponent {
                 // n
                 // 1 x y
                 // 2 a b x y
+                //tql
                 for(int i = 0; i < 8; i ++) {
                     for (int j = 0; j < 4; j++) {
                         out.write((chessComponents[i][j].getTeamColor() == TeamColor.BLACK ? "B" : "R") + chessComponents[i][j].getID());
