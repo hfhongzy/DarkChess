@@ -22,6 +22,7 @@ public class Chessboard extends JComponent {
     private static final int HEIGHT = 600;
     private static final int SIDEBOX_WIDTH = 110;
     public static final int TOP_SPACING_LENGTH = 20;
+    private boolean isEnded;
     PlayerStatus playerStatus;
     OptionalBox optionalBox;
     public void setOptionalBox(OptionalBox optionalBox) {
@@ -88,6 +89,7 @@ public class Chessboard extends JComponent {
         putChessOnBoard();
     }
     public void initChessOnBoard() {
+        isEnded = false;
         // todo : 应该会把这个变成接口，读档/新开局两不误
         ArrayList<ChessComponent> chess = new ArrayList<>(); // 生成棋子列表
         for (TeamColor color : TeamColor.values()) {
@@ -200,12 +202,17 @@ public class Chessboard extends JComponent {
     void checkWin() {
         if (playerStatus.red_score >= 60) {
             JOptionPane.showMessageDialog(null, "Red Win!");
+            isEnded = true;
         } else if (playerStatus.black_score >= 60) {
             JOptionPane.showMessageDialog(null, "Black Win!");
+            isEnded = true;
+        } else {
+            isEnded = false;
         }
     }
     
     void onClick(ChessComponent chess) {
+        if(isEnded) return ;
         if (first == null) {
             if (chess.isReversal()) {
                 flip(chess);
@@ -377,8 +384,8 @@ public class Chessboard extends JComponent {
             }
             chess2.setEaten(true);
             moveBuiltin(chess1, chess2);
-            checkWin();
         }
+        checkWin();
     }
     
     void capture(ChessComponent chess1, ChessComponent chess2) {

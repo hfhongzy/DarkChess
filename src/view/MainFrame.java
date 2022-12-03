@@ -23,7 +23,7 @@ public class MainFrame extends JFrame {
         // 初始化 panel
         mainPanel = new MainPanel(this);
         doublePlayerPanel = new DoublePlayerPanel(this);
-        playGamePanel = new PlayGamePanel();
+        playGamePanel = new PlayGamePanel(this);
         // 加入 panel
         pane.add(PanelType.MAIN_PANEL, mainPanel);
         pane.add(PanelType.DOUBLE_PLAYER_PANEL, doublePlayerPanel);

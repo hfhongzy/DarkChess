@@ -1,6 +1,7 @@
 package gameComponent;
 
 import buttonComponent.GameButton;
+import model.PanelType;
 import view.MainFrame;
 
 import javax.swing.*;
@@ -10,8 +11,8 @@ public class OptionalBox extends JComponent {
     static final int HEIGHT = 400;
     Chessboard chessboard;
     GameButton undoButton, redoButton, cheatButton;
-    GameButton saveButton, loadButton, restartButton;
-    public OptionalBox(Chessboard chessboard) {
+    GameButton saveButton, loadButton, restartButton, returnButton;
+    public OptionalBox(MainFrame mainFrame, Chessboard chessboard) {
         setSize(WIDTH, HEIGHT);
 
         this.chessboard = chessboard;
@@ -38,8 +39,12 @@ public class OptionalBox extends JComponent {
         restartButton.setLocation(150, 190);
         add(restartButton);
     
-        loadButton = new GameButton(70, 40, "读档", true, chessboard::loadChess);
-        loadButton.setLocation(150, 140);
-        add(loadButton);
+        returnButton = new GameButton(70, 40, "结束", true, () -> {
+            if (JOptionPane.showConfirmDialog(null, "你真的要结束游戏吗？", null, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                mainFrame.showPanel(PanelType.MAIN_PANEL);
+            }
+        });
+        returnButton.setLocation(30, 190);
+        add(returnButton);
     }
 }
