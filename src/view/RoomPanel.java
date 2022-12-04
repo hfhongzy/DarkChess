@@ -19,8 +19,9 @@ public class RoomPanel extends JPanel {
     setLayout(null);
     GameButton CreateButton = new GameButton(200, 40, "创建房间", true, () -> {
       String IP = Server.getIP();
-      JOptionPane.showMessageDialog(null, "您的 IP 为：" + IP + "，请分享给好友！");
+      JOptionPane.showMessageDialog(null, "您的 IP 为：" + IP + "，请分享给好友后点击确认！");
       Server server = new Server(new String[0]);
+      
       
 //      System.out.println("Get Host ID" + IP);
 //      String [] ip = new String [1];

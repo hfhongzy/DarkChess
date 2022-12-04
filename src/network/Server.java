@@ -27,14 +27,14 @@ public class Server {
   /**
    * Port to listen on, if none is specified on the command line.
    */
-  static final int DEFAULT_PORT = 1728;
+  static final int DEFAULT_PORT = 1969;
   
   /**
    * Handshake string. Each end of the connection sends this  string to the
    * other just after the connection is opened.  This is done to confirm that
    * the program on the other side of the connection is a CLChat program.
    */
-  static final String HANDSHAKE = "CLChat";
+  static final String HANDSHAKE = "LX_AK_IOI!";
   
   /**
    * This character is prepended to every message that is sent.
