@@ -104,6 +104,7 @@ public class Server {
       System.out.println("Listening on port " + listener.getLocalPort());
       connection = listener.accept();
       listener.close();
+//      System.out.println("wowo!");
       incoming = new BufferedReader(
           new InputStreamReader(connection.getInputStream()) );
       outgoing = new PrintWriter(connection.getOutputStream());
@@ -111,7 +112,7 @@ public class Server {
       outgoing.flush();
       messageIn = incoming.readLine();  // Receive handshake from client.
       if (! HANDSHAKE.equals(messageIn) ) {
-        throw new Exception("Connected program is not a CLChat!");
+        throw new Exception("Connected program is not a DarkChess!");
       }
       System.out.println("Connected.  Waiting for the first message.");
       flag = true;

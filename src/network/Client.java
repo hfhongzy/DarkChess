@@ -79,14 +79,14 @@ public class Client {
     
     try {
       System.out.println("Connecting to " + computer + " on port " + port);
-      connection = new Socket(computer,port);
+      connection = new Socket(computer, port);
       incoming = new BufferedReader(
           new InputStreamReader(connection.getInputStream()) );
       outgoing = new PrintWriter(connection.getOutputStream());
       outgoing.println(HANDSHAKE);  // Send handshake to client.
       outgoing.flush();
       messageIn = incoming.readLine();  // Receive handshake from client.
-      if (! messageIn.equals(HANDSHAKE) ) {
+      if (!messageIn.equals(HANDSHAKE) ) {
         throw new IOException("Connected program is not Darkchess!");
       }
       System.out.println("Connected.  Enter your first message.");

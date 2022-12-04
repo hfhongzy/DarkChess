@@ -1,11 +1,14 @@
 package view;
 
 import buttonComponent.GameButton;
+import labelComponent.GameLabel;
+import labelComponent.TextBlock;
 import model.PanelType;
 import network.Client;
 import network.Server;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.util.ArrayList;
@@ -19,7 +22,9 @@ public class RoomPanel extends JPanel {
     setLayout(null);
     GameButton CreateButton = new GameButton(200, 40, "创建房间", true, () -> {
       String IP = Server.getIP();
-      JOptionPane.showMessageDialog(null, "您的 IP 为：" + IP + "，请分享给好友后点击确认！");
+      System.out.println("您的 IP 为：" + IP + "，请分享给好友！");
+//      JOptionPane.showMessageDialog(null, IP, "提示", JOptionPane.PLAIN_MAGE);
+      
       Server server = new Server(new String[0]);
       
       
@@ -42,14 +47,13 @@ public class RoomPanel extends JPanel {
     GameButton JoinButton = new GameButton(200, 40, "加入房间", true, () -> {
       String[] IP = new String [1];
       IP[0] = JOptionPane.showInputDialog("请输入房主的 IP 地址");
-      System.out.println("Get Host ID" + IP[0]);
       Client client = new Client(IP);
       if(client.getFlag()) {
         JOptionPane.showMessageDialog(null, "成功连接！");
         mainFrame.playGamePanel.chessboard.setClient(client);
         mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
       } else {
-        JOptionPane.showMessageDialog(null, "连接失败，请重新链接。");
+        JOptionPane.showMessageDialog(null, "连接失败，请重新连接。");
       }
     });
     JoinButton.setLocation(300, 280);

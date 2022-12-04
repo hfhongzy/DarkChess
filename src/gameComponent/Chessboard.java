@@ -51,7 +51,6 @@ public class Chessboard extends JComponent {
         fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         initSideBoxs();
-        
         initChessOnBoard();
     }
     public void initSideBoxs() {
@@ -103,9 +102,7 @@ public class Chessboard extends JComponent {
     }
     Client client;
     Server server;
-    public void initChessOnBoardOnline() {
     
-    }
     public void setClient(Client client) {
         this.client = client;
     }
@@ -113,10 +110,53 @@ public class Chessboard extends JComponent {
         this.server = server;
     }
     public void serverStart() {
-    
+        restart();
+        for(int i = 0; i < 8; i ++) {
+            String s = new String();
+            for (int j = 0; j < 4; j++) {
+                s += (chessComponents[i][j].getTeamColor() == TeamColor.BLACK ? "B" : "R") + chessComponents[i][j].getID();
+                if(j < 3)
+                    s += " ";
+            }
+            server.send(s);
+        }
     }
     public void clientStart() {
-    
+        ArrayList<ChessComponent> chessList = new ArrayList<>();
+        for(int x = 0; x < 8; x ++) {
+            String s = server.read();
+            if(s == null) break;
+            s = s.trim();
+            String [] s0 = s.split(" ");
+            if(s0.length != 4) {
+//                JOptionPane.showMessageDialog(null, "读档失败。错误编码 102：棋盘错误。");
+                return ;
+            }
+            for(int y = 0; y < 4; y ++) {
+                if(s0[y].length() != 2 || !Character.isUpperCase(s0[y].charAt(0)) || !Character.isDigit(s0[y].charAt(1))) {
+//                    JOptionPane.showMessageDialog(null, "读档失败。错误编码 103：棋子错误。");
+                    return ;
+                }
+                char c = s0[y].charAt(0);
+                int id = s0[y].charAt(1) - '0';
+                if(id == 0)
+                    chessList.add(new GeneralChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                if(id == 1)
+                    chessList.add(new AdvisorChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                if(id == 2)
+                    chessList.add(new MinisterChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                if(id == 3)
+                    chessList.add(new ChariotChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                if(id == 4)
+                    chessList.add(new HorseChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                if(id == 5)
+                    chessList.add(new SoldierChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+                if(id == 6)
+                    chessList.add(new CannonChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
+            }
+        
+        }
+        rebuild(chessList);
     }
     public void initChessOnBoard() {
         isEnded = false;
