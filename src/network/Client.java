@@ -105,19 +105,17 @@ public class Client {
   }  // end main()
   public String read() {
     try {
-      while (true) {
-        messageIn = incoming.readLine();
-        if (messageIn.length() > 0) {
-          if (messageIn.charAt(0) == CLOSE) {
-            System.out.println("Connection closed at other end.");
-            connection.close();
-            break;
-          }
-          messageIn = messageIn.substring(1);
+      messageIn = incoming.readLine();
+      if (messageIn.length() > 0) {
+        if (messageIn.charAt(0) == CLOSE) {
+          System.out.println("Connection closed at other end.");
+          connection.close();
+          return "quit";
         }
-        System.out.println("RECEIVED:  " + messageIn);
-        return messageIn;
+        messageIn = messageIn.substring(1);
       }
+      System.out.println("RECEIVED:  " + messageIn);
+      return messageIn;
     }
     catch (Exception e) {
       System.out.println("Sorry, an error has occurred.  Connection lost.");

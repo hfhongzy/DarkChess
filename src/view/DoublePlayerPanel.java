@@ -19,7 +19,6 @@ public class DoublePlayerPanel extends JPanel {
 
         GameButton standaloneModeButton = new GameButton(200, 40, "热座模式", true, () -> {
             mainFrame.playGamePanel.setMode(1);
-//            mainFrame.playGamePanel.start();
             mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
         });
         standaloneModeButton.setLocation(300, 200);

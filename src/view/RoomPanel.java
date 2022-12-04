@@ -36,6 +36,7 @@ public class RoomPanel extends JPanel {
         JOptionPane.showMessageDialog(null, "成功连接！");
         mainFrame.playGamePanel.chessboard.setServer(server);
         mainFrame.playGamePanel.chessboard.serverStart();
+        mainFrame.playGamePanel.chessboard.setIsServer(true);
         mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
       } else {
         JOptionPane.showMessageDialog(null, "连接失败，请重新链接。");
@@ -53,6 +54,7 @@ public class RoomPanel extends JPanel {
         JOptionPane.showMessageDialog(null, "成功连接！");
         mainFrame.playGamePanel.chessboard.setClient(client);
         mainFrame.playGamePanel.chessboard.clientStart();
+        mainFrame.playGamePanel.chessboard.setIsServer(false);
         mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
       } else {
         JOptionPane.showMessageDialog(null, "连接失败，请重新连接。");
