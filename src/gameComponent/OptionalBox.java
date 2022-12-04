@@ -12,6 +12,15 @@ public class OptionalBox extends JComponent {
     Chessboard chessboard;
     GameButton undoButton, redoButton, cheatButton;
     GameButton saveButton, loadButton, restartButton, returnButton;
+    public void clear() {
+        undoButton.setWorking(false);
+        redoButton.setWorking(false);
+        cheatButton.setWorking(true);
+        saveButton.setWorking(true);
+        loadButton.setWorking(true);
+        restartButton.setWorking(true);
+        returnButton.setWorking(true);
+    }
     public OptionalBox(MainFrame mainFrame, Chessboard chessboard) {
         setSize(WIDTH, HEIGHT);
 
@@ -41,6 +50,7 @@ public class OptionalBox extends JComponent {
     
         returnButton = new GameButton(70, 40, "结束", true, () -> {
             if (JOptionPane.showConfirmDialog(null, "你真的要结束游戏吗？", null, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                chessboard.restart();
                 mainFrame.showPanel(PanelType.MAIN_PANEL);
             }
         });
