@@ -126,19 +126,16 @@ public class Server {
   
   public String read() {
     try {
-      while (true) {
-        messageIn = incoming.readLine();
-        if (messageIn.length() > 0) {
-          if (messageIn.charAt(0) == CLOSE) {
-            System.out.println("Connection closed at other end.");
-            connection.close();
-            break;
-          }
-          messageIn = messageIn.substring(1);
+      messageIn = incoming.readLine();
+      if (messageIn.length() > 0) {
+        if (messageIn.charAt(0) == CLOSE) {
+          System.out.println("Connection closed at other end.");
+          connection.close();
         }
-        System.out.println("RECEIVED:  " + messageIn);
-        return messageIn;
+        messageIn = messageIn.substring(1);
       }
+      System.out.println("RECEIVED:  " + messageIn);
+      return messageIn;
     }
     catch (Exception e) {
       System.out.println("Sorry, an error has occurred.  Connection lost.");
@@ -148,6 +145,7 @@ public class Server {
     return null;
   }
   public void send(String s) {
+    System.out.println("Sending " + s);
     outgoing.println(MESSAGE + messageOut);
     outgoing.flush();
   }

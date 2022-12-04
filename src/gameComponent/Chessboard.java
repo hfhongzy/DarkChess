@@ -124,7 +124,7 @@ public class Chessboard extends JComponent {
     public void clientStart() {
         ArrayList<ChessComponent> chessList = new ArrayList<>();
         for(int x = 0; x < 8; x ++) {
-            String s = server.read();
+            String s = client.read();
             if(s == null) break;
             s = s.trim();
             String [] s0 = s.split(" ");
