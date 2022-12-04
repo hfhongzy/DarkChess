@@ -23,8 +23,12 @@ public class Chessboard extends JComponent {
     private static final int SIDEBOX_WIDTH = 110;
     public static final int TOP_SPACING_LENGTH = 20;
     private boolean isEnded;
+    private int mode;
     PlayerStatus playerStatus;
     OptionalBox optionalBox;
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
     public void setOptionalBox(OptionalBox optionalBox) {
         this.optionalBox = optionalBox;
     }
@@ -32,6 +36,7 @@ public class Chessboard extends JComponent {
     //    UndoButton undo;
 //    RedoButton redo;
     public Chessboard(PlayerStatus playerStatus) {
+        mode = 0;
         setLayout(null);
         setSize(WIDTH, HEIGHT);
         this.playerStatus = playerStatus;
@@ -55,6 +60,7 @@ public class Chessboard extends JComponent {
      */
     public void rebuild(ArrayList<ChessComponent> chess) {
         current_time = -1;
+//        optionalBox.clear();
         chessSteps.clear();
         leftSide.clear();
         rightSide.clear();

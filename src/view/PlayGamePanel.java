@@ -8,9 +8,12 @@ public class PlayGamePanel extends JPanel {
     Chessboard chessboard;
     PlayerStatus playerStatus;
     OptionalBox optionalBox;
+    public void setMode(int mode) {
+        chessboard.setMode(mode);
+    }
+    
     public PlayGamePanel(MainFrame mainFrame) {
         setLayout(null);
-
         playerStatus = new PlayerStatus();
         playerStatus.setLocation(500, 0);
         add(playerStatus);

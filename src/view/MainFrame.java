@@ -9,7 +9,9 @@ import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame {
     public Container pane; // 显示的 panel，用于切换多个页面
-    JPanel mainPanel, playGamePanel, doublePlayerPanel; // 对应的panel
+    MainPanel mainPanel;
+    PlayGamePanel playGamePanel;
+    DoublePlayerPanel doublePlayerPanel; // 对应的panel
     public MainFrame(int width, int height) {
         setTitle("ChessGame - Demo");
 //        setBackground(Color.GREEN); // 背景颜色
