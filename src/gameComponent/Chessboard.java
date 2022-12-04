@@ -328,8 +328,8 @@ public class Chessboard extends JComponent {
         if (first == null) {
             if (chess.isReversal()) {
                 flip(chess);
-                sendMyMove();
                 chess.repaint(); //!!!!!!
+                sendMyMove();
             } else if (checkFirst(chess)) {
                 setReachableChess(chess, true);
                 first = chess;
@@ -347,19 +347,19 @@ public class Chessboard extends JComponent {
                 first.setSelected(false);
                 if (chess.isEaten()) move(first, chess);
                 else capture(first, chess);
-                sendMyMove(); //new
                 first.repaint();
                 chess.repaint();
                 first = null;
+                sendMyMove(); //new
             } else if (chess.isReversal()) {
                 setReachableChess(first, false);
                 first.setSelected(false);
                 flip(chess);
-                sendMyMove(); //new
                 
                 first.repaint();
                 chess.repaint();
                 first = null;
+                sendMyMove(); //new
             } else if (checkFirst(chess)) {
                 setReachableChess(first, false);
                 first.setSelected(false);
