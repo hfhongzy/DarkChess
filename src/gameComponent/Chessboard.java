@@ -522,6 +522,8 @@ public class Chessboard extends JComponent {
         // 设置按钮启用或禁用
         optionalBox.undoButton.setWorking(true);
         optionalBox.redoButton.setWorking(false);
+        chess1.repaint();
+        chess2.repaint();
     }
     
     void captureBuiltin(ChessComponent chess1, ChessComponent chess2) {
@@ -559,6 +561,8 @@ public class Chessboard extends JComponent {
         // 设置按钮启用或禁用
         optionalBox.undoButton.setWorking(true);
         optionalBox.redoButton.setWorking(false);
+        chess1.repaint();
+        chess2.repaint();
     }
     
     void flipBuiltin(ChessComponent chess) {
@@ -585,6 +589,7 @@ public class Chessboard extends JComponent {
         // 设置按钮启用或禁用
         optionalBox.undoButton.setWorking(true);
         optionalBox.redoButton.setWorking(false);
+        chess.repaint();
     }
     void switchCheating() {
         for (int i = 0; i < 8; i++) {
