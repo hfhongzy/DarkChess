@@ -127,7 +127,7 @@ public class Client {
     return null;
   }
   public void send(String s) {
-    outgoing.println(MESSAGE + messageOut);
+    outgoing.println(MESSAGE + s);
     outgoing.flush();
   }
   public void quit() {

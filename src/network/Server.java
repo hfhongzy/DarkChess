@@ -146,7 +146,7 @@ public class Server {
   }
   public void send(String s) {
     System.out.println("Sending " + s);
-    outgoing.println(MESSAGE + messageOut);
+    outgoing.println(MESSAGE + s);
     outgoing.flush();
   }
   public void quit() {
