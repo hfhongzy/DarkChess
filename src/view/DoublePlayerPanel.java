@@ -19,6 +19,7 @@ public class DoublePlayerPanel extends JPanel {
 
         GameButton standaloneModeButton = new GameButton(200, 40, "热座模式", true, () -> {
             mainFrame.playGamePanel.setMode(1);
+//            mainFrame.playGamePanel.start();
             mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
         });
         standaloneModeButton.setLocation(300, 200);
@@ -26,7 +27,7 @@ public class DoublePlayerPanel extends JPanel {
         
         GameButton LANModeButton = new GameButton(200, 40, "局域网联机", true, () -> {
             mainFrame.playGamePanel.setMode(2);
-            mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
+            mainFrame.showPanel(PanelType.ROOM_PANEL);
         });
         LANModeButton.setLocation(300, 280);
         add(LANModeButton);

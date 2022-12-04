@@ -3,6 +3,8 @@ package gameComponent;
 import chessComponent.*;
 import model.ChessStep;
 import model.TeamColor;
+import network.Client;
+import network.Server;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -28,6 +30,10 @@ public class Chessboard extends JComponent {
     OptionalBox optionalBox;
     public void setMode(int mode) {
         this.mode = mode;
+        isServer = mode == 1;
+    }
+    public int getMode() {
+        return mode;
     }
     public void setOptionalBox(OptionalBox optionalBox) {
         this.optionalBox = optionalBox;
@@ -45,6 +51,7 @@ public class Chessboard extends JComponent {
         fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         initSideBoxs();
+        
         initChessOnBoard();
     }
     public void initSideBoxs() {
@@ -93,6 +100,23 @@ public class Chessboard extends JComponent {
             chessComponents[x][y] = chessComponent;
         }
         putChessOnBoard();
+    }
+    Client client;
+    Server server;
+    public void initChessOnBoardOnline() {
+    
+    }
+    public void setClient(Client client) {
+        this.client = client;
+    }
+    public void setServer(Server server) {
+        this.server = server;
+    }
+    public void serverStart() {
+    
+    }
+    public void clientStart() {
+    
     }
     public void initChessOnBoard() {
         isEnded = false;
@@ -216,9 +240,58 @@ public class Chessboard extends JComponent {
             isEnded = false;
         }
     }
-    
+    TeamColor MyColor;
+    boolean isServer;
+    void onClickOnline(ChessComponent chess) {
+        if(playerStatus.currentColor == MyColor)
+        if (first == null) {
+            if (chess.isReversal()) {
+                flip(chess);
+                chess.repaint(); //!!!!!!
+            } else if (checkFirst(chess)) {
+                setReachableChess(chess, true);
+                first = chess;
+                first.setSelected(true);
+                first.repaint();
+            }
+        } else {
+            if (first == chess) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                first.repaint();
+                first = null;
+            } else if (chess.isReachable()) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                if (chess.isEaten()) move(first, chess);
+                else capture(first, chess);
+                first.repaint();
+                chess.repaint();
+                first = null;
+            } else if (chess.isReversal()) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                flip(chess);
+                first.repaint();
+                chess.repaint();
+                first = null;
+            } else if (checkFirst(chess)) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                setReachableChess(chess, true);
+                chess.setSelected(true);
+                first.repaint();
+                chess.repaint();
+                first = chess;
+            }
+        }
+    }
     void onClick(ChessComponent chess) {
         if(isEnded) return ;
+        if(mode == 2) {
+            onClickOnline(chess);
+            return ;
+        }
         if (first == null) {
             if (chess.isReversal()) {
                 flip(chess);
