@@ -1,5 +1,7 @@
 package gameComponent;
 
+import labelComponent.GameLabel;
+import labelComponent.TextBlock;
 import model.TeamColor;
 
 import javax.swing.*;
@@ -10,9 +12,15 @@ public class PlayerStatus extends JComponent {
     private static final int HEIGHT = 200;
     int red_score, black_score;
     TeamColor currentColor;
+    GameLabel messageLabel, scoreLabel;
     public PlayerStatus() {
         setLayout(null);
         setSize(WIDTH, HEIGHT);
+
+        messageLabel = new GameLabel();
+        scoreLabel = new GameLabel();
+        add(messageLabel);
+        add(scoreLabel);
 
         currentColor = null;
         red_score = black_score = 0;
@@ -32,14 +40,14 @@ public class PlayerStatus extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        if (currentColor == null) {
-            g2.setColor(Color.BLACK);
-            g2.drawString("请先选一个棋子", 100, 50);
-        } else {
-            g2.setColor(currentColor.getColor());
-            g2.drawString(String.format("%s色方", currentColor.getName()), 100, 50);
-        }
-        g2.setColor(Color.GREEN);
-        g2.drawString(String.format("RED %d : %d BLACK", red_score, black_score), 100, 200);
+        if (currentColor == null)
+            messageLabel.setText(new TextBlock("翻转一个棋子决定红黑方", Color.GRAY, 20));
+        else
+            messageLabel.setText(new TextBlock("轮到 ", Color.GRAY, 20), new TextBlock(currentColor.getName() + "色方", currentColor.getColor(), 30));
+        scoreLabel.setText(new TextBlock("红色方 " + red_score, Color.RED, 30),
+                           new TextBlock(" : ", Color.GRAY, 25),
+                           new TextBlock(black_score + " 黑色方", Color.BLACK, 30));
+        messageLabel.setLocation(150 - messageLabel.getWidth() / 2, 80 - messageLabel.getHeight() / 2);
+        scoreLabel.setLocation(150 - scoreLabel.getWidth() / 2, 150 - scoreLabel.getHeight() / 2);
     }
 }

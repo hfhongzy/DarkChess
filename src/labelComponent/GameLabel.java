@@ -12,7 +12,7 @@ public class GameLabel extends JComponent {
         this.textBlocks = new ArrayList<>(Arrays.asList(textBlocks));
         autoResize();
     }
-    void setText(TextBlock... textBlocks) {
+    public void setText(TextBlock... textBlocks) {
         this.textBlocks = new ArrayList<>(Arrays.asList(textBlocks));
         autoResize();
         repaint();
