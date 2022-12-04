@@ -309,7 +309,7 @@ public class Chessboard extends JComponent {
             
             } else {
                 moveChess(s);
-                nowServer = !nowServer;
+//                nowServer = !nowServer;
             }
         } else {
             client.send(cur.toString());
@@ -318,7 +318,7 @@ public class Chessboard extends JComponent {
             
             } else {
                 moveChess(s);
-                nowServer = !nowServer;
+//                nowServer = !nowServer;
             }
         }
     }
