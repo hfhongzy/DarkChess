@@ -21,11 +21,8 @@ public class PlayerStatus extends JComponent {
         scoreLabel = new GameLabel();
         add(messageLabel);
         add(scoreLabel);
-
-        currentColor = null;
-        red_score = black_score = 0;
     }
-    void clear() {
+    public void start() {
         red_score = black_score = 0;
         currentColor = null;
     }

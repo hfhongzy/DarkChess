@@ -1,3 +1,4 @@
+import archiveManager.ArchiveManager;
 import view.MainFrame;
 
 import javax.swing.*;
@@ -12,6 +13,8 @@ public class Main {
         
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame(800,600);
+            ArchiveManager.init(mainFrame);
+            System.out.println(ArchiveManager.getSavePath());
             mainFrame.setVisible(true);
         });
     }

@@ -1,8 +1,8 @@
 package gameComponent;
 
 import chessComponent.*;
+import gameController.GameController;
 import model.ChessStep;
-import model.PanelType;
 import model.TeamColor;
 import network.Client;
 import network.Server;
@@ -35,11 +35,19 @@ public class Chessboard extends JComponent {
         isServer = mode == 1;
         nowServer = true;
     }
+    GameController gameController;
+    public void start(GameController gameController) {
+        this.gameController = gameController;
+        gameController.loadGame();
+        // 初始化step和 sideBox
+        current_time = -1;
+        chessSteps.clear();
+        leftSide.clear();
+        rightSide.clear();
+        // todo : movement gameController->steps
+    }
     public void setIsServer(boolean isServer) {
         this.isServer = isServer;
-    }
-    public int getMode() {
-        return mode;
     }
     public void setOptionalBox(OptionalBox optionalBox) {
         this.optionalBox = optionalBox;
@@ -48,7 +56,6 @@ public class Chessboard extends JComponent {
     //    UndoButton undo;
 //    RedoButton redo;
     public Chessboard(PlayerStatus playerStatus) {
-        mode = 0;
         setLayout(null);
         setSize(WIDTH, HEIGHT);
         this.playerStatus = playerStatus;
@@ -56,10 +63,10 @@ public class Chessboard extends JComponent {
         chessSteps = new ArrayList<>();
         fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-        initSideBoxs();
-        initChessOnBoard();
+        initSideBoxes();
+//        initChess();
     }
-    public void initSideBoxs() {
+    public void initSideBoxes() {
         leftSide = new SideBox(SIDEBOX_WIDTH, HEIGHT, TeamColor.RED);
         leftSide.setLocation(0, 0);
         rightSide = new SideBox(SIDEBOX_WIDTH, HEIGHT, TeamColor.BLACK);
@@ -70,42 +77,10 @@ public class Chessboard extends JComponent {
     /**
      * 将一个 Arraylist 中的棋子放到棋盘上，并删除之前的棋盘、清空 SideBox。
      */
-    public void rebuild(ArrayList<ChessComponent> chess) {
-        current_time = -1;
-//        optionalBox.clear();
-        chessSteps.clear();
-        leftSide.clear();
-        rightSide.clear();
-        playerStatus.clear();
-        putChessAwayBoard();
-        for (int i = 0; i < chess.size(); i++) { // 放到棋盘上
-            int x = i / 4, y = i % 4;
-            ChessComponent chessComponent = chess.get(i);
-            chessComponent.setX(x);
-            chessComponent.setY(y);
-            chessComponent.setLocation(SIDEBOX_WIDTH + y * CHESS_WIDTH, TOP_SPACING_LENGTH + x * CHESS_WIDTH);
-            chessComponent.addMouseListener(new MouseAdapter() {
-                boolean isPressed = false;
-                boolean isOnChess(int X, int Y) {
-                    return 2 * Math.sqrt((X - CHESS_WIDTH / 2.0) * (X - CHESS_WIDTH / 2.0) + (Y - CHESS_WIDTH / 2.0) * (Y - CHESS_WIDTH / 2.0)) <= CHESS_WIDTH;
-                }
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (isPressed && isOnChess(e.getX(), e.getY()))
-                        onClick(chessComponent);
-                    isPressed = false;
-                }
-            
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    if (isOnChess(e.getX(), e.getY()))
-                        isPressed = true;
-                }
-            });
-            chessComponents[x][y] = chessComponent;
-        }
-        putChessOnBoard();
-    }
+    /*
+    // todo : lxakioi
+
+     */
     Client client;
     Server server;
     
@@ -116,15 +91,15 @@ public class Chessboard extends JComponent {
         this.server = server;
     }
     public void serverStart() {
-        restart();
+//        restart();
         for(int i = 0; i < 8; i ++) {
-            String s = new String();
+            StringBuilder s = new StringBuilder();
             for (int j = 0; j < 4; j++) {
-                s += (chessComponents[i][j].getTeamColor() == TeamColor.BLACK ? "B" : "R") + chessComponents[i][j].getID();
+                s.append(chessComponents[i][j].getTeamColor() == TeamColor.BLACK ? "B" : "R").append(chessComponents[i][j].getID());
                 if(j < 3)
-                    s += " ";
+                    s.append(" ");
             }
-            server.send(s);
+            server.send(s.toString());
         }
     }
     private void addChessRow(String s, ArrayList<ChessComponent> chessList) {
@@ -164,7 +139,6 @@ public class Chessboard extends JComponent {
             if(s == null) break;
             addChessRow(s, chessList);
         }
-        rebuild(chessList);
         String s = client.read();
         if(s.equals("quit")) {
         
@@ -173,24 +147,25 @@ public class Chessboard extends JComponent {
             nowServer = !nowServer;
         }
     }
-    public void initChessOnBoard() {
-        isEnded = false;
+    public static ArrayList<ChessComponent> getRandomChess() {
+//        isEnded = false;
         // todo : 应该会把这个变成接口，读档/新开局两不误
-        ArrayList<ChessComponent> chess = new ArrayList<>(); // 生成棋子列表
+        ArrayList<ChessComponent> chessList = new ArrayList<>(); // 生成棋子列表
         for (TeamColor color : TeamColor.values()) {
-            chess.add(new GeneralChessComponent(color, CHESS_WIDTH));
+            chessList.add(new GeneralChessComponent(color, CHESS_WIDTH));
             for (int i = 0; i < 2; i++) {
-                chess.add(new AdvisorChessComponent(color, CHESS_WIDTH));
-                chess.add(new MinisterChessComponent(color, CHESS_WIDTH));
-                chess.add(new HorseChessComponent(color, CHESS_WIDTH));
-                chess.add(new ChariotChessComponent(color, CHESS_WIDTH));
-                chess.add(new CannonChessComponent(color, CHESS_WIDTH));
+                chessList.add(new AdvisorChessComponent(color, CHESS_WIDTH));
+                chessList.add(new MinisterChessComponent(color, CHESS_WIDTH));
+                chessList.add(new HorseChessComponent(color, CHESS_WIDTH));
+                chessList.add(new ChariotChessComponent(color, CHESS_WIDTH));
+                chessList.add(new CannonChessComponent(color, CHESS_WIDTH));
             }
             for (int i = 0; i < 5; i++)
-                chess.add(new SoldierChessComponent(color, CHESS_WIDTH));
+                chessList.add(new SoldierChessComponent(color, CHESS_WIDTH));
         }
-        Collections.shuffle(chess); // 随机打乱棋子
-        rebuild(chess);
+        Collections.shuffle(chessList); // 随机打乱棋子
+        return chessList;
+//        rebuild(chess);
     }
     
     public void putChessAwayBoard() {
@@ -202,10 +177,33 @@ public class Chessboard extends JComponent {
                     remove(chessComponents[i][j]);
                 }
     }
-    public void putChessOnBoard() {
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 4; j++)
-                add(chessComponents[i][j]);
+    public void putChessOnBoard(ArrayList<ChessComponent> chessList) {
+        putChessAwayBoard();
+        for (int i = 0; i < chessList.size(); i++) { // 放到棋盘上
+            int x = i / 4, y = i % 4;
+            ChessComponent chessComponent = chessList.get(i);
+            chessComponent.setX(x);
+            chessComponent.setY(y);
+            chessComponent.setLocation(SIDEBOX_WIDTH + y * CHESS_WIDTH, TOP_SPACING_LENGTH + x * CHESS_WIDTH);
+            chessComponent.addMouseListener(new MouseAdapter() {
+                boolean isPressed = false;
+                boolean isOnChess(int X, int Y) {
+                    return 2 * Math.sqrt((X - CHESS_WIDTH / 2.0) * (X - CHESS_WIDTH / 2.0) + (Y - CHESS_WIDTH / 2.0) * (Y - CHESS_WIDTH / 2.0)) <= CHESS_WIDTH;
+                }
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    if (isPressed && isOnChess(e.getX(), e.getY()))
+                        gameController.onClick(chessComponent);
+                    isPressed = false;
+                }
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if (isOnChess(e.getX(), e.getY()))
+                        isPressed = true;
+                }
+            });
+            add(chessComponents[x][y] = chessComponent);
+        }
     }
     
     @Override
@@ -245,7 +243,7 @@ public class Chessboard extends JComponent {
         return 0 <= x && x < 8 && 0 <= y && y < 4;
     }
     
-    void setReachableChess(ChessComponent chess, boolean status) { // 将 chess 可到达的棋子设置成 status, 并且重新绘制
+    public void setReachableChess(ChessComponent chess, boolean status) { // 将 chess 可到达的棋子设置成 status, 并且重新绘制
         ArrayList<ChessComponent> chessArr = new ArrayList<>();
         int X = chess.X(), Y = chess.Y();
         final int[] dx = {1, 0, -1, 0};
@@ -280,10 +278,65 @@ public class Chessboard extends JComponent {
         }
     }
     
-    boolean checkFirst(ChessComponent chess) { // 判断 chess 是否可被选中
+    public boolean checkFirst(ChessComponent chess) { // 判断 chess 是否可被选中
         return !chess.isEaten() && chess.getTeamColor() == playerStatus.getCurrentColor();
     }
 
+    /**
+     * @param chess
+     * @return if done an operation
+     */
+    public boolean click(ChessComponent chess) {
+        if (first == null) {
+            if (chess.isReversal()) {
+                flip(chess);
+                chess.repaint();
+                return true;
+            } else if (checkFirst(chess)) {
+                setReachableChess(chess, true);
+                first = chess;
+                first.setSelected(true);
+                first.repaint();
+            }
+        } else {
+            if (first == chess) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                first.repaint();
+                first = null;
+            } else if (chess.isReachable()) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                if (chess.isEaten()) move(first, chess);
+                else capture(first, chess);
+                first.repaint();
+                chess.repaint();
+                first = null;
+                return true;
+            } else if (chess.isReversal()) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                flip(chess);
+                first.repaint();
+                chess.repaint();
+                first = null;
+                return true;
+            } else if (checkFirst(chess)) {
+                setReachableChess(first, false);
+                first.setSelected(false);
+                setReachableChess(chess, true);
+                chess.setSelected(true);
+                first.repaint();
+                chess.repaint();
+                first = chess;
+            }
+        }
+        return false;
+    }
+
+    public boolean isEnded() {
+        return playerStatus.red_score >= 60 || playerStatus.black_score >= 60;
+    }
     void checkWin() {
         if (playerStatus.red_score >= 60) {
             JOptionPane.showMessageDialog(null, "Red Win!");
@@ -322,6 +375,7 @@ public class Chessboard extends JComponent {
             }
         }
     }
+    /*
     void onClickOnline(ChessComponent chess) {
         if(nowServer != isServer)
             return ;
@@ -371,55 +425,7 @@ public class Chessboard extends JComponent {
             }
         }
     }
-    void onClick(ChessComponent chess) {
-        if(isEnded) return ;
-        if(mode == 2) {
-            onClickOnline(chess);
-            return ;
-        }
-        if (first == null) {
-            if (chess.isReversal()) {
-                flip(chess);
-                chess.repaint(); //!!!!!!
-            } else if (checkFirst(chess)) {
-                setReachableChess(chess, true);
-                first = chess;
-                first.setSelected(true);
-                first.repaint();
-            }
-        } else {
-            if (first == chess) {
-                setReachableChess(first, false);
-                first.setSelected(false);
-                first.repaint();
-                first = null;
-            } else if (chess.isReachable()) {
-                setReachableChess(first, false);
-                first.setSelected(false);
-                if (chess.isEaten()) move(first, chess);
-                else capture(first, chess);
-                first.repaint();
-                chess.repaint();
-                first = null;
-            } else if (chess.isReversal()) {
-                setReachableChess(first, false);
-                first.setSelected(false);
-                flip(chess);
-                first.repaint();
-                chess.repaint();
-                first = null;
-            } else if (checkFirst(chess)) {
-                setReachableChess(first, false);
-                first.setSelected(false);
-                setReachableChess(chess, true);
-                chess.setSelected(true);
-                first.repaint();
-                chess.repaint();
-                first = chess;
-            }
-        }
-    }
-    
+     */
     void exchangePlayer() {
         playerStatus.setCurrentColor(playerStatus.getCurrentColor() == TeamColor.RED ? TeamColor.BLACK : TeamColor.RED);
         playerStatus.repaint();
@@ -514,7 +520,7 @@ public class Chessboard extends JComponent {
         exchangePlayer();
     }
     
-    void move(ChessComponent chess1, ChessComponent chess2) {
+    public void move(ChessComponent chess1, ChessComponent chess2) {
         current_time++;
         modifySteps(new ChessStep(2, chess1.X(), chess1.Y(), chess2.X(), chess2.Y()));
         moveBuiltin(chess1, chess2);
@@ -554,7 +560,7 @@ public class Chessboard extends JComponent {
         checkWin();
     }
     
-    void capture(ChessComponent chess1, ChessComponent chess2) {
+    public void capture(ChessComponent chess1, ChessComponent chess2) {
         current_time++;
         modifySteps(new ChessStep(3, chess1.X(), chess1.Y(), chess2.X(), chess2.Y()));
         captureBuiltin(chess1, chess2);
@@ -582,7 +588,7 @@ public class Chessboard extends JComponent {
         }
     }
     
-    void flip(ChessComponent chess) {
+    public void flip(ChessComponent chess) {
         current_time++;
         modifySteps(new ChessStep(1, chess.X(), chess.Y()));
         flipBuiltin(chess);
@@ -722,7 +728,6 @@ public class Chessboard extends JComponent {
                     if(s == null) break;
                     addChessRow(s, chessList);
                 }
-                rebuild(chessList);
                 buffIn.readLine();
                 int n = Integer.parseInt(buffIn.readLine());
                 for(int i = 0; i < n; i ++) {
@@ -742,8 +747,5 @@ public class Chessboard extends JComponent {
         /*
         * 1
         * */
-    }
-    void restart() {
-        initChessOnBoard();
     }
 }

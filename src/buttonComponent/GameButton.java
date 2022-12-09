@@ -13,13 +13,13 @@ public class GameButton extends JComponent {
     boolean isWorking;
     private static final Font BUTTON_FONT = new Font("宋体", Font.PLAIN, 18);
     private static final Font BUTTON_BOLD_FONT = new Font("宋体", Font.BOLD, 18);
-    public GameButton(int width, int height, String name, boolean working, GameButtonEvent gameButtonEvent) {
+    public GameButton(int width, int height, String name, GameButtonEvent gameButtonEvent) {
         WIDTH = width;
         HEIGHT = height;
         isEnter = false;
         isPressed = false;
         this.name = name;
-        isWorking = working;
+        isWorking = true;
         setSize(WIDTH, HEIGHT);
         addMouseListener(new MouseAdapter() {
             @Override

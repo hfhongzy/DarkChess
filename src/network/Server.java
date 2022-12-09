@@ -62,6 +62,7 @@ public class Server {
     return flag;
   }
   public static String getIP() {
+    String res = null; // new
     try {
       Enumeration<NetworkInterface> nifs = NetworkInterface.getNetworkInterfaces();
       while (nifs.hasMoreElements()) {
@@ -72,15 +73,20 @@ public class Server {
           if (addr instanceof Inet4Address) {
             if(nif.getName().equals("en0")) {
               JOptionPane.showMessageDialog(null, "OK!");
-              return addr.getHostAddress();
+              res = addr.getHostAddress();
+//              return addr.getHostAddress();
             }
           }
+          System.out.println(nif.getName());
+          System.out.println(addr.getHostAddress().toString());
+          System.out.println(addr instanceof Inet6Address);
         }
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return null;
+//    return null;
+    return res; // new
   }
   public Server(String[] args) {
     flag = false;
