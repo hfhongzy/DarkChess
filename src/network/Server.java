@@ -70,10 +70,16 @@ public class Server extends Thread{
     return res;
   }
   public Server() {
-    Message.show("Share your IP: " + getIP());
+    String IP = Server.getIP();
+//    Message.show("Share your IP: " + IP);
+    System.out.println("Your ip: " + IP);
     flag = false;
     port = DEFAULT_PORT;
-    String IP = Server.getIP();
+    try {
+      Thread.sleep(1000);
+    } catch (Exception e) {
+      System.out.println(e.toString());
+    }
   
     try {
       listener = new ServerSocket(port);
@@ -104,6 +110,8 @@ public class Server extends Thread{
     } else {
       Message.show( "连接失败，请重新链接。");
     }
+   
+    
   }
   public void start() {
     if(thread == null) {
