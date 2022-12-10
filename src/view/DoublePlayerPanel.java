@@ -1,6 +1,7 @@
 package view;
 
 import buttonComponent.GameButton;
+import gameController.OnlineGameController;
 import gameController.PVPGameController;
 import labelComponent.GameLabel;
 import labelComponent.TextBlock;
@@ -28,7 +29,6 @@ public class DoublePlayerPanel extends JPanel {
         add(standaloneModeButton);
         
         GameButton LANModeButton = new GameButton(200, 40, "局域网联机", () -> {
-//            mainFrame.playGamePanel.start(2);
             mainFrame.showPanel(PanelType.ROOM_PANEL);
         });
         LANModeButton.setLocation(300, 280);

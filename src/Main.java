@@ -13,8 +13,8 @@ public class Main {
         
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame(800,600);
-            ArchiveManager.init(mainFrame);
-            System.out.println(ArchiveManager.getSavePath());
+//            ArchiveManager.init(mainFrame);
+//            System.out.println(ArchiveManager.getSavePath());
             mainFrame.setVisible(true);
         });
     }

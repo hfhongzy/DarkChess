@@ -15,6 +15,11 @@ public abstract class GameController {
     public GameController() {
         setMode(true, true, true, true);
     }
+    
+    public Chessboard getChessboard() {
+        return chessboard;
+    }
+    
     public void setMode(boolean undo_redo, boolean cheat, boolean restart, boolean load) {
         this.undo_redo = undo_redo;
         this.cheat = cheat;

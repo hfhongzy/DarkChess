@@ -27,7 +27,7 @@ public class Chessboard extends JComponent {
     public static final int TOP_SPACING_LENGTH = 20;
     private boolean isEnded;
     private int mode;
-    PlayerStatus playerStatus;
+    public PlayerStatus playerStatus; //注意！
     OptionalBox optionalBox;
     
     public void setMode(int mode) {
@@ -38,13 +38,17 @@ public class Chessboard extends JComponent {
     GameController gameController;
     public void start(GameController gameController) {
         this.gameController = gameController;
-        gameController.loadGame();
         // 初始化step和 sideBox
         current_time = -1;
         chessSteps.clear();
         leftSide.clear();
         rightSide.clear();
+        gameController.loadGame();
+        
         // todo : movement gameController->steps
+    }
+    public ChessComponent getChessComponent(int x, int y) {
+        return chessComponents[x][y];
     }
     public void setIsServer(boolean isServer) {
         this.isServer = isServer;
@@ -74,6 +78,9 @@ public class Chessboard extends JComponent {
         add(leftSide);
         add(rightSide);
     }
+    public String getLastStep() { //新
+        return chessSteps.get(chessSteps.size() - 1).toString();
+    }
     /**
      * 将一个 Arraylist 中的棋子放到棋盘上，并删除之前的棋盘、清空 SideBox。
      */
@@ -81,15 +88,21 @@ public class Chessboard extends JComponent {
     // todo : lxakioi
 
      */
+        /*
     Client client;
     Server server;
+    */
     
+    
+    /*
     public void setClient(Client client) {
         this.client = client;
     }
     public void setServer(Server server) {
         this.server = server;
     }
+     */
+    /*
     public void serverStart() {
 //        restart();
         for(int i = 0; i < 8; i ++) {
@@ -102,7 +115,8 @@ public class Chessboard extends JComponent {
             server.send(s.toString());
         }
     }
-    private void addChessRow(String s, ArrayList<ChessComponent> chessList) {
+     */
+    static public void addChessRow(String s, ArrayList<ChessComponent> chessList) {
         s = s.trim();
         String [] s0 = s.split(" ");
         if(s0.length != 4) {
@@ -132,6 +146,7 @@ public class Chessboard extends JComponent {
                 chessList.add(new CannonChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
         }
     }
+    /*
     public void clientStart() {
         ArrayList<ChessComponent> chessList = new ArrayList<>();
         for(int x = 0; x < 8; x ++) {
@@ -147,6 +162,8 @@ public class Chessboard extends JComponent {
             nowServer = !nowServer;
         }
     }
+  
+     */
     public static ArrayList<ChessComponent> getRandomChess() {
 //        isEnded = false;
         // todo : 应该会把这个变成接口，读档/新开局两不误
@@ -349,6 +366,7 @@ public class Chessboard extends JComponent {
         }
     }
     boolean isServer, nowServer;
+    /*
     void sendMyMove() { //向对方发送我的走棋，从 ArrayList 最后一个元素得到
         if(chessSteps.size() == 0) {
             System.out.println("Error, no moves.");
@@ -374,8 +392,8 @@ public class Chessboard extends JComponent {
 //                nowServer = !nowServer;
             }
         }
-    }
-    /*
+
+    
     void onClickOnline(ChessComponent chess) {
         if(nowServer != isServer)
             return ;
@@ -673,7 +691,7 @@ public class Chessboard extends JComponent {
             return ;
         }
     }
-    void moveChess(String s) {
+    public void moveChess(String s) {
         s = s.trim();
         String [] s0 = s.split(" ");
         if(s0.length != 5) {

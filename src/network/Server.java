@@ -1,68 +1,50 @@
 package network;
 
+import gameComponent.Chessboard;
+import gameController.OnlineGameController;
+import model.PanelType;
+
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Queue;
 
-/**
- * This program is one end of a simple command-line interface chat program.
- * It acts as a server which waits for a connection from the CLChatClient
- * program.  The port on which the server listens can be specified as a
- * command-line argument.  If it is not, then the port specified by the
- * constant DEFAULT_PORT is used.  Note that if a port number of zero is
- * specified, then the server will listen on any available port.
- * This program only supports one connection.  As soon as a connection is
- * opened, the listening socket is closed down.  The two ends of the connection
- * each send a HANDSHAKE string to the other, so that both ends can verify
- * that the program on the other end is of the right type.  Then the connected
- * programs alternate sending messages to each other.  The client always sends
- * the first message.  The user on either end can close the connection by
- * entering the string "quit" when prompted for a message.  Note that the first
- * character of any string sent over the connection must be 0 or 1; this
- * character is interpreted as a command.
- */
-public class Server {
+public class Server extends Thread{
   
-  /**
-   * Port to listen on, if none is specified on the command line.
-   */
+  public void setOnlineGameController(OnlineGameController onlineGameController) {
+    this.onlineGameController = onlineGameController;
+  }
+  OnlineGameController onlineGameController;
   static final int DEFAULT_PORT = 1969;
   
-  /**
-   * Handshake string. Each end of the connection sends this  string to the
-   * other just after the connection is opened.  This is done to confirm that
-   * the program on the other side of the connection is a CLChat program.
-   */
   static final String HANDSHAKE = "LX_AK_IOI!";
   
-  /**
-   * This character is prepended to every message that is sent.
-   */
   static final char MESSAGE = '0';
-  
-  /**
-   * This character is sent to the connected program when the user quits.
-   */
+
   static final char CLOSE = '1';
-  int port;   // The port on which the server listens.
+  int port;
   
-  ServerSocket listener;  // Listens for a connection request.
-  Socket connection;      // For communication with the client.
+  ServerSocket listener;
+  Socket connection;
   
-  BufferedReader incoming;  // Stream for receiving data from client.
-  PrintWriter outgoing;     // Stream for sending data to client.
-  String messageOut;        // A message to be sent to the client.
-  String messageIn;         // A message received from the client.
+  BufferedReader incoming;
+  PrintWriter outgoing;
+  String messageOut;
+  volatile String messageIn = "";
   
-  BufferedReader userInput; // A wrapper for System.in, for reading
+  BufferedReader userInput;
+  
+  Thread thread;
   // lines of input from the user.
   boolean flag;
+  volatile public boolean listening = false;
   public boolean getFlag() {
     return flag;
   }
   public static String getIP() {
-    String res = null; // new
+    String res = null;
     try {
       Enumeration<NetworkInterface> nifs = NetworkInterface.getNetworkInterfaces();
       while (nifs.hasMoreElements()) {
@@ -72,45 +54,32 @@ public class Server {
           InetAddress addr = address.nextElement();
           if (addr instanceof Inet4Address) {
             if(nif.getName().equals("en0")) {
-              JOptionPane.showMessageDialog(null, "OK!");
+              //JOptionPane.showMessageDialog(null, "OK!");
               res = addr.getHostAddress();
 //              return addr.getHostAddress();
             }
           }
-          System.out.println(nif.getName());
-          System.out.println(addr.getHostAddress().toString());
-          System.out.println(addr instanceof Inet6Address);
+//          System.out.println(nif.getName());
+//          System.out.println(addr.getHostAddress().toString());
+//          System.out.println(addr instanceof Inet6Address);
         }
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
-//    return null;
-    return res; // new
+    return res;
   }
-  public Server(String[] args) {
+  public Server() {
+//    Message.show("Share your IP: " + getIP());
     flag = false;
-    if (args.length == 0)
-      port = DEFAULT_PORT;
-    else {
-      try {
-        port= Integer.parseInt(args[0]);
-        if (port < 0 || port > 65535)
-          throw new NumberFormatException();
-      }
-      catch (NumberFormatException e) {
-        System.out.println("Illegal port number, " + args[0]);
-        return;
-      }
-    }
-
-    
+    port = DEFAULT_PORT;
+    String IP = Server.getIP();
+  
     try {
       listener = new ServerSocket(port);
       System.out.println("Listening on port " + listener.getLocalPort());
       connection = listener.accept();
       listener.close();
-//      System.out.println("wowo!");
       incoming = new BufferedReader(
           new InputStreamReader(connection.getInputStream()) );
       outgoing = new PrintWriter(connection.getOutputStream());
@@ -121,6 +90,7 @@ public class Server {
         throw new Exception("Connected program is not a DarkChess!");
       }
       System.out.println("Connected.  Waiting for the first message.");
+      messageIn = "";
       flag = true;
     }
     catch (Exception e) {
@@ -128,27 +98,59 @@ public class Server {
       System.out.println(e.toString());
       return;
     }
-  }
   
-  public String read() {
-    try {
-      messageIn = incoming.readLine();
-      if (messageIn.length() > 0) {
+    if(getFlag()) {
+      Message.show( "成功连接！");
+    } else {
+      Message.show( "连接失败，请重新链接。");
+    }
+  }
+  public void start() {
+    if(thread == null) {
+      thread = new Thread(this, "ServerThread");
+      thread.start();
+    }
+  }
+  volatile boolean isWorking = false; //while 循环在执行，吧 messageIn 锁死
+  public void run() {
+    while(true) {
+      try {
+//        Thread.sleep(200); //节约资源
+        if(!listening) continue;
+        isWorking = true;
+        messageIn = incoming.readLine();
+        if(messageIn.length() == 0)
+          continue;
+        listening = false;
         if (messageIn.charAt(0) == CLOSE) {
           System.out.println("Connection closed at other end.");
           connection.close();
+          return ;
         }
+       
         messageIn = messageIn.substring(1);
+        System.out.println("RECEIVED:  " + messageIn);
+        if(!Character.isAlphabetic(messageIn.charAt(messageIn.length() - 2))) {
+          onlineGameController.getChessboard().moveChess(messageIn);
+          onlineGameController.changeTurn();
+        }
+        isWorking = false;
       }
-      System.out.println("RECEIVED:  " + messageIn);
-      return messageIn;
+      catch (Exception e) {
+        System.out.println("Sorry, an error has occurred.");
+        System.out.println(e.toString());
+        System.exit(1);
+      }
     }
-    catch (Exception e) {
-      System.out.println("Sorry, an error has occurred.  Connection lost.");
-      System.out.println(e.toString());
-      System.exit(1);
-    }
-    return null;
+  }
+  
+  public String read() {
+    listening = true;
+    while(messageIn.length() == 0 || isWorking);
+    System.out.println("wow, " + messageIn);
+    String ret = messageIn;
+    messageIn = "";
+    return ret;
   }
   public void send(String s) {
     System.out.println("Sending " + s);

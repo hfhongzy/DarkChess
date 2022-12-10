@@ -2,9 +2,13 @@ package view;
 
 import gameComponent.*;
 import gameController.GameController;
+import labelComponent.GameLabel;
+import labelComponent.TextBlock;
 import model.PanelType;
+import network.Message;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class PlayGamePanel extends JPanel {
     MainFrame mainFrame;
@@ -33,6 +37,7 @@ public class PlayGamePanel extends JPanel {
         gameController.setChessboard(chessboard);
     }
     public void start() {
+        //Message.show("name");
         chessboard.start(gameController);
         optionalBox.start(gameController.undo_redo, gameController.cheat, gameController.restart, gameController.load);
         playerStatus.start();
