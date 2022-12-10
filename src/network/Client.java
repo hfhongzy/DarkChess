@@ -3,6 +3,7 @@ package network;
 import gameComponent.Chessboard;
 import gameController.GameController;
 import gameController.OnlineGameController;
+import model.TeamColor;
 
 import javax.swing.*;
 import java.net.*;
@@ -104,6 +105,10 @@ public class Client extends Thread {
         System.out.println("length" + String.valueOf(messageIn.length()));
         if(!Character.isAlphabetic(messageIn.charAt(messageIn.length() - 2))) {
           onlineGameController.getChessboard().moveChess(messageIn);
+          if(onlineGameController.getMyColor() == null)
+            onlineGameController.setMyColor(
+                onlineGameController.getChessboard().playerStatus.getCurrentColor()
+            );
           onlineGameController.changeTurn();
         }
         isWorking = false;
