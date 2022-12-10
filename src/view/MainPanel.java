@@ -1,6 +1,7 @@
 package view;
 
 import buttonComponent.GameButton;
+import gameController.PVEGameController;
 import labelComponent.GameLabel;
 import labelComponent.TextBlock;
 import model.PanelType;
@@ -16,7 +17,13 @@ public class MainPanel extends JPanel {
         title.setLocation(400 - title.getWidth() / 2, 80);
         add(title);
 
-        GameButton singlePlayerButton = new GameButton(200, 40, "单人模式", () -> {});
+        GameButton singlePlayerButton = new GameButton(200, 40, "单人模式", () -> {
+            PVEGameController pveGameController = new PVEGameController(1);
+            pveGameController.setMode(false, true, true, true);
+            mainFrame.playGamePanel.setGameController(pveGameController);
+            mainFrame.playGamePanel.start();
+            mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);
+        });
         singlePlayerButton.setLocation(300, 200);
         add(singlePlayerButton);
 
