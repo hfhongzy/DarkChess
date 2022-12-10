@@ -41,8 +41,8 @@ public class Client extends Thread {
   private String serverIP;
   
   public Client() {
-//    serverIP = JOptionPane.showInputDialog("请输入房主的 IP 地址").trim();
-    serverIP = "10.13.212.153";
+    serverIP = JOptionPane.showInputDialog("请输入房主的 IP 地址").trim();
+//    serverIP = "10.13.212.153";
     flag = false;
     port = DEFAULT_PORT;
     try {
@@ -105,10 +105,13 @@ public class Client extends Thread {
         System.out.println("length" + String.valueOf(messageIn.length()));
         if(!Character.isAlphabetic(messageIn.charAt(messageIn.length() - 2))) {
           onlineGameController.getChessboard().moveChess(messageIn);
+          /*
           if(onlineGameController.getMyColor() == null)
             onlineGameController.setMyColor(
                 onlineGameController.getChessboard().playerStatus.getCurrentColor()
             );
+            
+           */
           onlineGameController.changeTurn();
         }
         isWorking = false;

@@ -70,7 +70,7 @@ public class Server extends Thread{
     return res;
   }
   public Server() {
-//    Message.show("Share your IP: " + getIP());
+    Message.show("Share your IP: " + getIP());
     flag = false;
     port = DEFAULT_PORT;
     String IP = Server.getIP();

@@ -12,7 +12,7 @@ public class OnlineGameController extends GameController {
     Server server;
     Client client;
     private boolean myTurn, isServer;
-    
+    /*
     public TeamColor getMyColor() {
         return myColor;
     }
@@ -22,8 +22,11 @@ public class OnlineGameController extends GameController {
     }
     
     private TeamColor myColor = null;
+    
+     */
     public void changeTurn() {
         myTurn = !myTurn;
+        System.out.println("myturn : "  + String.valueOf(myTurn));
     }
     public OnlineGameController(boolean isServer) {
         super();
@@ -74,19 +77,7 @@ public class OnlineGameController extends GameController {
     @Override
     public void onClick(ChessComponent chess) {
         if(chessboard.isEnded() || !myTurn) return;
-        chessboard.click(chess);
-        if(myColor == null) {
-          myColor = chessboard.playerStatus.getCurrentColor();
-          if(isServer) {
-            server.send(chessboard.getLastStep());
-          } else {
-            client.send(chessboard.getLastStep());
-          }
-          if(isServer)
-            server.listening = true;
-          else
-            client.listening = true;
-        } else if(myColor != chessboard.playerStatus.getCurrentColor()) {
+        if(chessboard.click(chess)) {
             if(isServer)
                 server.send(chessboard.getLastStep());
             else
