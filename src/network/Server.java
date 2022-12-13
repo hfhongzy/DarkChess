@@ -11,83 +11,47 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Queue;
 
-public class Server extends Thread{
-  
-  public void setOnlineGameController(OnlineGameController onlineGameController) {
-    this.onlineGameController = onlineGameController;
+public class Server extends Network{
+  public boolean isListen() {
+    return listen;
   }
-  OnlineGameController onlineGameController;
-  static final int DEFAULT_PORT = 1969;
   
-  static final String HANDSHAKE = "LX_AK_IOI!";
-  
-  static final char MESSAGE = '0';
-
-  static final char CLOSE = '1';
-  int port;
-  
+  private boolean listen;
   ServerSocket listener;
-  Socket connection;
   
-  BufferedReader incoming;
-  PrintWriter outgoing;
-  String messageOut;
-  volatile String messageIn = "";
-  
-  BufferedReader userInput;
-  
-  Thread thread;
-  // lines of input from the user.
-  boolean flag;
-  volatile public boolean listening = false;
-  public boolean getFlag() {
-    return flag;
-  }
-  public static String getIP() {
-    String res = null;
+  @Override
+  public void interrupt() {
     try {
-      Enumeration<NetworkInterface> nifs = NetworkInterface.getNetworkInterfaces();
-      while (nifs.hasMoreElements()) {
-        NetworkInterface nif = nifs.nextElement();
-        Enumeration<InetAddress> address = nif.getInetAddresses();
-        while (address.hasMoreElements()) {
-          InetAddress addr = address.nextElement();
-          if (addr instanceof Inet4Address) {
-            if(nif.getName().equals("en0")) {
-              //JOptionPane.showMessageDialog(null, "OK!");
-              res = addr.getHostAddress();
-//              return addr.getHostAddress();
-            }
-          }
-//          System.out.println(nif.getName());
-//          System.out.println(addr.getHostAddress().toString());
-//          System.out.println(addr instanceof Inet6Address);
-        }
-      }
+      listener.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return res;
+    super.interrupt();
   }
-  public Server() {
-    String IP = Server.getIP();
-//    Message.show("Share your IP: " + IP);
-    System.out.println("Your ip: " + IP);
-    flag = false;
-    port = DEFAULT_PORT;
-    try {
-      Thread.sleep(1000);
-    } catch (Exception e) {
-      System.out.println(e.toString());
-    }
   
+  public void construct() {
+//    String IP = Server.getIP();
+//    System.out.println("Share your IP: " + IP);
+    
+    flag = false;
+    listen = false;
+    port = DEFAULT_PORT;
+    
     try {
-      listener = new ServerSocket(port);
+      listen = true;
+      listener = new ServerSocket(port, 1);
+      
       System.out.println("Listening on port " + listener.getLocalPort());
-      connection = listener.accept();
+      try {
+        connection = listener.accept();
+      } catch (Exception e) {
+        System.out.println("Interrupted.");
+        return ;
+      }
       listener.close();
+      listen = false;
       incoming = new BufferedReader(
-          new InputStreamReader(connection.getInputStream()) );
+          new InputStreamReader( connection.getInputStream()) );
       outgoing = new PrintWriter(connection.getOutputStream());
       outgoing.println(HANDSHAKE);  // Send handshake to client.
       outgoing.flush();
@@ -119,7 +83,6 @@ public class Server extends Thread{
       thread.start();
     }
   }
-  volatile boolean isWorking = false; //while 循环在执行，吧 messageIn 锁死
   public void run() {
     while(true) {
       try {
@@ -152,19 +115,6 @@ public class Server extends Thread{
     }
   }
   
-  public String read() {
-    listening = true;
-    while(messageIn.length() == 0 || isWorking);
-    System.out.println("wow, " + messageIn);
-    String ret = messageIn;
-    messageIn = "";
-    return ret;
-  }
-  public void send(String s) {
-    System.out.println("Sending " + s);
-    outgoing.println(MESSAGE + s);
-    outgoing.flush();
-  }
   public void quit() {
     try {
       System.out.println("Connection closed.");
@@ -178,4 +128,4 @@ public class Server extends Thread{
     }
   }
   
-} //end class CLChatServer
+}

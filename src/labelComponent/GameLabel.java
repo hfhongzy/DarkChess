@@ -33,7 +33,7 @@ public class GameLabel extends JComponent {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.GREEN);
-        g2.drawRect(0, 0, getWidth(), getHeight());
+//        g2.drawRect(0, 0, getWidth(), getHeight());
         int cur = 0;
         for (TextBlock textBlock : textBlocks) {
             g2.setFont(textBlock.font);

@@ -9,35 +9,8 @@ import javax.swing.*;
 import java.net.*;
 import java.io.*;
 
-public class Client extends Thread {
+public class Client extends Network {
   
-  public void setOnlineGameController(OnlineGameController onlineGameController) {
-    this.onlineGameController = onlineGameController;
-  }
-  
-  //每次 new 一个新的，仅用于传输操作，不操作棋盘
-  OnlineGameController onlineGameController;
-  
-  
-  static final int DEFAULT_PORT = 1969;
-  static final String HANDSHAKE = "LX_AK_IOI!";
-  static final char MESSAGE = '0';
-  static final char CLOSE = '1';
-  
-  String computer;
-  int port;
-  private Socket connection;
-  private BufferedReader incoming;  // Stream for receiving data from server.
-  private PrintWriter outgoing;     // Stream for sending data to server.
-  private String messageOut;        // A message to be sent to the server.
-  volatile private String messageIn = "";         // A message received from the server.
-  
-  BufferedReader userInput; // A wrapper for System.in, for reading
-  
-  boolean flag;
-  public boolean getFlag() {
-    return flag;
-  }
   private String serverIP;
   
   public Client() {
@@ -66,15 +39,7 @@ public class Client extends Thread {
       System.out.println(e.toString());
       return;
     }
-    if(getFlag()) {
-      Message.show("成功连接！");
-    } else {
-      Message.show("连接失败，请重新连接。");
-    }
   }
-  volatile public boolean listening = false;
-  volatile boolean isWorking = false;
-  Thread thread;
   public void start() {
     thread = new Thread(this, "ClientMessage");
     thread.start();
@@ -122,22 +87,7 @@ public class Client extends Thread {
       }
     }
   }
-  public String read() {
-    System.out.println("reading!");
-    listening = true;
-    while(messageIn.length() == 0 || isWorking) {
-//      System.out.println("waiting.");
-    }
-    System.out.println("wow, " + messageIn);
-    String ret = messageIn;
-    messageIn = "";
-    return ret;
-  }
-  public void send(String s) {
-    System.out.println("Sending " + s);
-    outgoing.println(MESSAGE + s);
-    outgoing.flush();
-  }
+  
   public void quit() {
     try {
       System.out.println("Connection closed.");

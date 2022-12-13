@@ -5,6 +5,7 @@ import gameController.GameController;
 import model.ChessStep;
 import model.TeamColor;
 import network.Client;
+import network.Message;
 import network.Server;
 
 import javax.swing.*;
@@ -90,7 +91,7 @@ public class Chessboard extends JComponent {
      */
         /*
     Client client;
-    Server server;
+    ServerPanel.java server;
     */
     
     
@@ -98,7 +99,7 @@ public class Chessboard extends JComponent {
     public void setClient(Client client) {
         this.client = client;
     }
-    public void setServer(Server server) {
+    public void setServer(ServerPanel.java server) {
         this.server = server;
     }
      */
@@ -352,10 +353,10 @@ public class Chessboard extends JComponent {
     }
     void checkWin() {
         if (playerStatus.red_score >= 60) {
-            JOptionPane.showMessageDialog(null, "Red Win!");
+            Message.show("Red Win!");
             isEnded = true;
         } else if (playerStatus.black_score >= 60) {
-            JOptionPane.showMessageDialog(null, "Black Win!");
+            Message.show("Black Win!");
             isEnded = true;
         } else {
             isEnded = false;

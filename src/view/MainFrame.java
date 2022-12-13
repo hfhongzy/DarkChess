@@ -13,6 +13,7 @@ public class MainFrame extends JFrame {
     PlayGamePanel playGamePanel;
     DoublePlayerPanel doublePlayerPanel; // 对应的panel
     RoomPanel roomPanel;
+    WaitPanel waitPanel;
     public MainFrame(int width, int height) {
         setTitle("ChessGame - Demo");
 //        setBackground(Color.GREEN); // 背景颜色
@@ -28,11 +29,14 @@ public class MainFrame extends JFrame {
         doublePlayerPanel = new DoublePlayerPanel(this);
         playGamePanel = new PlayGamePanel(this);
         roomPanel = new RoomPanel(this);
+        waitPanel = new WaitPanel(this);
+        
         // 加入 panel
         pane.add(PanelType.MAIN_PANEL, mainPanel);
         pane.add(PanelType.DOUBLE_PLAYER_PANEL, doublePlayerPanel);
         pane.add(PanelType.PLAY_GAME_PANEL, playGamePanel); // 名称 - panel
         pane.add(PanelType.ROOM_PANEL, roomPanel);
+        pane.add(PanelType.WAIT_PANEL, waitPanel);
         // 展示当前 panel
         showPanel(PanelType.MAIN_PANEL);
 

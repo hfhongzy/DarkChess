@@ -12,29 +12,26 @@ public class OnlineGameController extends GameController {
     Server server;
     Client client;
     private boolean myTurn, isServer;
-    /*
-    public TeamColor getMyColor() {
-        return myColor;
-    }
-    
-    public void setMyColor(TeamColor myColor) {
-        this.myColor = myColor;
-    }
-    
-    private TeamColor myColor = null;
-    
-     */
     public void changeTurn() {
         myTurn = !myTurn;
         System.out.println("myturn : "  + String.valueOf(myTurn));
     }
+    public void interrupt() {
+        if(isServer) {
+            System.out.println("Let me interrupt server!");
+            server.interrupt();
+        }
+    }
     public OnlineGameController(boolean isServer) {
         super();
         this.isServer = isServer;
-        if(isServer) {
+    }
+    public void construct() {
+        if (isServer) {
             server = new Server();
+            server.construct();
             myTurn = true;
-        }  else {
+        } else {
             client = new Client();
             myTurn = false;
         }
@@ -94,5 +91,8 @@ public class OnlineGameController extends GameController {
     @Override
     public void restart() {
         chessList = null;
+    }
+    public boolean isConnected() {
+        return isServer ? server.getFlag() : client.getFlag();
     }
 }

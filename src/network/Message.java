@@ -17,7 +17,7 @@ public class Message extends Thread{
     t.start();
   }
   public void run() {
-    JOptionPane.showMessageDialog(null, "haha!");
+    JOptionPane.showMessageDialog(null, message);
     /*
     JFrame d = new JFrame();
     d.setTitle("Title!");
