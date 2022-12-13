@@ -1,30 +1,39 @@
 package archiveManager;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 
 public class ArchiveManager {
-    static FileDialog readFileDialog;
-    static FileDialog saveFileDialog;
+    static JFileChooser fileChooser;
     public static void init(Frame frame) {
-        /*
-        readFileDialog = new FileDialog(frame, "选择需要读取的存档", FileDialog.LOAD);
-        saveFileDialog = new FileDialog(frame, "保存你的存档", FileDialog.SAVE);
-        String userDir = System.getProperty("user.dir");
-        readFileDialog.setDirectory(userDir);
-        saveFileDialog.setDirectory(userDir);
-        readFileDialog.setFilenameFilter((dir, name) -> name.endsWith(".darkchess"));
-        saveFileDialog.setFilenameFilter((dir, name) -> name.endsWith(".darkchess"));
-      
-         */
+        fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        String dir = System.getProperty("user.dir");
+        fileChooser.setCurrentDirectory(new File(dir));
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.getPath().toLowerCase().endsWith(".darkchess");
+            }
+
+            @Override
+            public String getDescription() {
+                return ".darkchess 文件";
+            }
+        });
     }
     public static String getReadPath() {
-        readFileDialog.setVisible(true);
-        return readFileDialog.getDirectory() + readFileDialog.getFile();
+//        JOptionPane.showOp
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+            return fileChooser.getSelectedFile().getPath();
+        return null;
     }
     public static String getSavePath() {
-        saveFileDialog.setVisible(true);
-        return saveFileDialog.getDirectory() + saveFileDialog.getFile();
+        if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
+            return fileChooser.getSelectedFile().getPath();
+        return null;
     }
 }

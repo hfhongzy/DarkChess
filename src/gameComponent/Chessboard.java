@@ -225,11 +225,8 @@ public class Chessboard extends JComponent {
     
     @Override
     protected void paintComponent(Graphics g) {
-        // todo : 绘制一个棋盘
-        
         g.setColor(Color.GREEN);
         g.drawRect(0, 0, WIDTH, HEIGHT);
-        
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(1f));
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -238,7 +235,6 @@ public class Chessboard extends JComponent {
             g2.drawLine(SIDEBOX_WIDTH, TOP_SPACING_LENGTH + i * CHESS_WIDTH, SIDEBOX_WIDTH + 4 * CHESS_WIDTH, TOP_SPACING_LENGTH + i * CHESS_WIDTH);
         for (int i = 1; i < 4; i++)
             g2.drawLine(SIDEBOX_WIDTH + i * CHESS_WIDTH, TOP_SPACING_LENGTH, SIDEBOX_WIDTH + i * CHESS_WIDTH, TOP_SPACING_LENGTH + 8 * CHESS_WIDTH);
-        
         g2.setStroke(new BasicStroke(2f));
         g2.drawRect(SIDEBOX_WIDTH, TOP_SPACING_LENGTH, 4 * CHESS_WIDTH, 8 * CHESS_WIDTH);
     }
