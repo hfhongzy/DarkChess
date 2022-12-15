@@ -25,6 +25,7 @@ public class TextBlock {
         font = new Font("宋体", Font.PLAIN, font_size);
         this.color = color;
     }
+    
     public TextBlock(String text, Color color, Font font) {
         this.text = text;
         this.color = color;

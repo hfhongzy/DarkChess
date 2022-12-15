@@ -52,18 +52,18 @@ public class WaitPanel extends JPanel {
   public WaitPanel(MainFrame mainFrame) {
     setLayout(null);
     GameLabel title = new GameLabel(new TextBlock("您创建的房间", 50));
-    title.setLocation(400 - title.getWidth() / 2, 80);
+    title.setLocation(400 - title.getWidth() / 2, 120);
     add(title);
     
-    GameLabel title2 = new GameLabel(new TextBlock("您的 IP 为 " + getIP(), 20));
-    title2.setLocation(400 - title2.getWidth() / 2, 170);
+    GameLabel title2 = new GameLabel(new TextBlock("您的 IP 为 " + getIP() + "，分享给好友吧！", 20));
+    title2.setLocation(400 - title2.getWidth() / 2, 210);
     add(title2);
     
     GameButton returnButton = new GameButton(200, 40, "返回", () -> {
       serverWait.interrupt();
       mainFrame.showPanel(PanelType.ROOM_PANEL);
     });
-    returnButton.setLocation(300, 360);
+    returnButton.setLocation(300, 340);
     add(returnButton);
   }
 }

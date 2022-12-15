@@ -68,12 +68,15 @@ public class Server extends Network{
       System.out.println(e.toString());
       return;
     }
-  
+    
+    /*
     if(getFlag()) {
       Message.show( "成功连接！");
     } else {
       Message.show( "连接失败，请重新链接。");
     }
+    
+     */
    
     
   }
@@ -86,7 +89,7 @@ public class Server extends Network{
   public void run() {
     while(true) {
       try {
-//        Thread.sleep(200); //节约资源
+//        Thread.sleep(50); //节约资源
         if(!listening) continue;
         isWorking = true;
         messageIn = incoming.readLine();

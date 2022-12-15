@@ -14,7 +14,11 @@ public class Client extends Network {
   private String serverIP;
   
   public Client() {
-    serverIP = JOptionPane.showInputDialog("请输入房主的 IP 地址").trim();
+    serverIP = JOptionPane.showInputDialog("请输入房主的 IP 地址");
+    if(serverIP == null) {
+      return;
+    }
+    serverIP.trim();
 //    serverIP = "10.13.212.153";
     flag = false;
     port = DEFAULT_PORT;

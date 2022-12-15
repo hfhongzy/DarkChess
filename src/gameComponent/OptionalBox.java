@@ -26,10 +26,10 @@ public class OptionalBox extends JComponent {
         cheatButton = new GameButton(70, 40, "透视", chessboard::switchCheating);
         cheatButton.setLocation(30, 90);
         add(cheatButton);
-        saveButton = new GameButton(70, 40, "存档", playGamePanel::save);
+        saveButton = new GameButton(70, 40, "存档", chessboard::saveChess); //playGamePanel::save
         saveButton.setLocation(30, 140);
         add(saveButton);
-        loadButton = new GameButton(70, 40, "读档", playGamePanel::load);
+        loadButton = new GameButton(70, 40, "读档", chessboard::loadChess); //playGamePanel::load
         loadButton.setLocation(150, 140);
         add(loadButton);
         restartButton = new GameButton(70, 40, "重开", () -> {

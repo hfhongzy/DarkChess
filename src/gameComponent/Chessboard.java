@@ -689,6 +689,7 @@ public class Chessboard extends JComponent {
         }
     }
     public void moveChess(String s) {
+        
         s = s.trim();
         String [] s0 = s.split(" ");
         if(s0.length != 5) {
