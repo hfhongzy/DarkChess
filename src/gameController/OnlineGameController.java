@@ -61,6 +61,7 @@ public class OnlineGameController extends GameController {
         } else {
             client.start();
             chessList = new ArrayList<>();
+            Chessboard.addChessRowInit();
             for(int x = 0; x < 8; x ++) {
                 String s = client.read();
                 System.out.println("read (outside) " + s);
@@ -69,7 +70,6 @@ public class OnlineGameController extends GameController {
             chessboard.putChessOnBoard(new ArrayList<>(chessList));
             client.listening = true;
         }
-//      todo : chessboard.moveSteps(step);
     }
     @Override
     public void onClick(ChessComponent chess) {

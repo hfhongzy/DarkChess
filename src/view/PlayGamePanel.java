@@ -38,9 +38,9 @@ public class PlayGamePanel extends JPanel {
     }
     public void start() {
         //Message.show("name");
-        chessboard.start(gameController);
-        optionalBox.start(gameController.undo_redo, gameController.cheat, gameController.restart, gameController.load);
         playerStatus.start();
+        optionalBox.start(gameController.undo_redo, gameController.cheat, gameController.restart, gameController.load);
+        chessboard.start(gameController);
     }
     public void restart() {
         gameController.restart();
@@ -50,8 +50,9 @@ public class PlayGamePanel extends JPanel {
         mainFrame.showPanel(PanelType.MAIN_PANEL);
     }
     public void load() {
-        if (gameController.load())
+        if(gameController.load()) {
             start();
+        }
     }
     public void save() {
         gameController.save();

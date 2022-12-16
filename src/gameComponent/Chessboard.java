@@ -30,31 +30,35 @@ public class Chessboard extends JComponent {
     private int mode;
     public PlayerStatus playerStatus; //注意！
     OptionalBox optionalBox;
-    
     public void setMode(int mode) {
         this.mode = mode;
-        isServer = mode == 1;
-        nowServer = true;
+//        isServer = mode == 1;
+//        nowServer = true;
     }
     GameController gameController;
-    public void start(GameController gameController) {
-        this.gameController = gameController;
-        // 初始化step和 sideBox
+    public void clear() {
         current_time = -1;
         chessSteps.clear();
         leftSide.clear();
         rightSide.clear();
+    }
+    public void start(GameController gameController) {
+        this.gameController = gameController;
+        // 初始化step和 sideBox
+        clear();
         gameController.loadGame();
-        
         // todo : movement gameController->steps
     }
     public ChessComponent[][] getChessComponents() { return chessComponents; }
     public ChessComponent getChessComponent(int x, int y) {
         return chessComponents[x][y];
     }
+    /*
     public void setIsServer(boolean isServer) {
         this.isServer = isServer;
     }
+    
+     */
     public void setOptionalBox(OptionalBox optionalBox) {
         this.optionalBox = optionalBox;
     }
@@ -67,8 +71,8 @@ public class Chessboard extends JComponent {
         this.playerStatus = playerStatus;
         current_time = -1;
         chessSteps = new ArrayList<>();
-        fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        //fileChooser = new JFileChooser();
+        //fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         initSideBoxes();
 //        initChess();
     }
@@ -118,20 +122,33 @@ public class Chessboard extends JComponent {
         }
     }
      */
-    static public void addChessRow(String s, ArrayList<ChessComponent> chessList) {
+    static int []limA, limB;
+    static public void addChessRowInit() {
+        limA = new int[]{1, 2, 2, 2, 2, 5, 2};
+        limB = new int[]{1, 2, 2, 2, 2, 5, 2};
+    }
+    static public boolean addChessRow(String s, ArrayList<ChessComponent> chessList) {
         s = s.trim();
         String [] s0 = s.split(" ");
         if(s0.length != 4) {
             JOptionPane.showMessageDialog(null, "读档失败。错误编码 102：棋盘错误。");
-            return ;
+            return false;
         }
+    
+        
         for(int y = 0; y < 4; y ++) {
             if(s0[y].length() != 2 || !Character.isUpperCase(s0[y].charAt(0)) || !Character.isDigit(s0[y].charAt(1))) {
                 JOptionPane.showMessageDialog(null, "读档失败。错误编码 103：棋子错误。");
-                return ;
+                return false;
             }
             char c = s0[y].charAt(0);
             int id = s0[y].charAt(1) - '0';
+            int z = -- (c == 'B' ? limA : limB) [id];
+            System.out.println("z = " + z);
+            if(z < 0) {
+                JOptionPane.showMessageDialog(null, "读档失败。错误编码 103：棋子错误!");
+                return false;
+            }
             if(id == 0)
                 chessList.add(new GeneralChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
             if(id == 1)
@@ -147,6 +164,7 @@ public class Chessboard extends JComponent {
             if(id == 6)
                 chessList.add(new CannonChessComponent(c == 'B' ? TeamColor.BLACK : TeamColor.RED, CHESS_WIDTH));
         }
+        return true;
     }
     /*
     public void clientStart() {
@@ -244,6 +262,7 @@ public class Chessboard extends JComponent {
     boolean checkMoveTo(ChessComponent from, ChessComponent to) {
         if (to.isEaten()) return true;
         if (to.isReversal()) return false;
+        if(from instanceof CannonChessComponent) return true; //for 读档
         if (from.getTeamColor() == to.getTeamColor()) return false;
         if (from instanceof SoldierChessComponent) {
             return (to instanceof SoldierChessComponent) || (to instanceof GeneralChessComponent);
@@ -353,6 +372,7 @@ public class Chessboard extends JComponent {
         return playerStatus.red_score >= 60 || playerStatus.black_score >= 60;
     }
     void checkWin() {
+//        if(isEnded) return ;
         if (playerStatus.red_score >= 60) {
             Message.show("Red Win!");
             isEnded = true;
@@ -363,7 +383,7 @@ public class Chessboard extends JComponent {
             isEnded = false;
         }
     }
-    boolean isServer, nowServer;
+//    boolean isServer, nowServer;
     /*
     void sendMyMove() { //向对方发送我的走棋，从 ArrayList 最后一个元素得到
         if(chessSteps.size() == 0) {
@@ -447,8 +467,8 @@ public class Chessboard extends JComponent {
         playerStatus.repaint();
     }
     
-    final private ArrayList<ChessStep> chessSteps;
-    int current_time;
+    public final ArrayList<ChessStep> chessSteps;
+    public int current_time;
     
     void modifySteps(ChessStep step) {
         if (current_time == chessSteps.size()) {
@@ -459,7 +479,12 @@ public class Chessboard extends JComponent {
                 chessSteps.remove(chessSteps.size() - 1);
         }
     }
-    
+    public void undoall() {
+        while(current_time > -1) {
+            undo();
+        }
+        chessSteps.clear();
+    }
     void undo() { //
         if (first != null) {
             first.setSelected(false);
@@ -623,6 +648,7 @@ public class Chessboard extends JComponent {
         }
     }
     //暂时存这里
+    /*
     JFileChooser fileChooser;
     void saveChess() {
 //        FileDialog fileDialog = new FileDialog();
@@ -630,7 +656,6 @@ public class Chessboard extends JComponent {
 //        JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 //        fileChooser.setCurrentDirectory(new File(currentPath));
-//        fileChooser.set
         fileChooser.setApproveButtonMnemonic(0);
         fileChooser.setFileFilter(new FileFilter() {
             @Override
@@ -659,7 +684,6 @@ public class Chessboard extends JComponent {
                 // n
                 // 1 x y
                 // 2 a b x y
-                //tql
                 for(int i = 0; i < chessSteps.size(); i ++)
                     undo();
                 for(int i = 0; i < 8; i ++) {
@@ -689,34 +713,41 @@ public class Chessboard extends JComponent {
             return ;
         }
     }
-    public void moveChess(String s) {
-        
+    
+     */
+    public boolean moveChess(String s) {
         s = s.trim();
         String [] s0 = s.split(" ");
-        if(s0.length != 5) {
-            JOptionPane.showMessageDialog(null, "读档失败。错误编码 105：行棋步骤错误。");
-            return ;
-        }
+        if(s0.length != 5)
+            return false;
         for(int j = 0; j < 5; j ++)
-            if(s0[j].length() != 1 || !Character.isDigit(s0[j].charAt(0))) {
-                JOptionPane.showMessageDialog(null, "读档失败。错误编码 105：行棋步骤错误。");
-                return ;
-            }
+            if(s0[j].length() != 1 || !Character.isDigit(s0[j].charAt(0)))
+                return false;
+            
         int x1 = s0[1].charAt(0) - '0';
         int y1 = s0[2].charAt(0) - '0';
         int x2 = s0[3].charAt(0) - '0';
         int y2 = s0[4].charAt(0) - '0';
     
         if(s0[0].charAt(0) == '1') {
+            if(!chessComponents[x1][y1].isReversal())
+                return false;
             flip(chessComponents[x1][y1]);
         } else if(s0[0].charAt(0) == '2') {
+            if(!checkMoveTo(chessComponents[x1][y1], chessComponents[x2][y2]))
+                return false;
             move(chessComponents[x1][y1], chessComponents[x2][y2]);
         } else {
+            if(!checkMoveTo(chessComponents[x1][y1], chessComponents[x2][y2])) {
+                return false;
+            }
             capture(chessComponents[x1][y1], chessComponents[x2][y2]);
         }
+        return true;
     }
+    /*
     void loadChess() {
-//        JFileChooser fileChooser = new JFileChooser();
+        
         fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -760,10 +791,8 @@ public class Chessboard extends JComponent {
             
         } else if(fres == JFileChooser.CANCEL_OPTION) {
             JOptionPane.showMessageDialog(null, "读档失败！");
-            return ;
         }
-        /*
-        * 1
-        * */
     }
+    
+     */
 }

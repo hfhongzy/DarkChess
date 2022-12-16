@@ -2,12 +2,14 @@ package gameController;
 
 import chessComponent.ChessComponent;
 import gameComponent.Chessboard;
+import model.ChessStep;
 
 import java.util.ArrayList;
 
 public abstract class GameController {
     Chessboard chessboard;
     ArrayList<ChessComponent> chessList; // 初始棋盘，如果null表示随机生成一个
+    ArrayList<String> chessSteps = new ArrayList<>();
     public boolean undo_redo, cheat, restart, load;
     public abstract void loadGame();
     public abstract void onClick(ChessComponent chess);
@@ -32,7 +34,5 @@ public abstract class GameController {
     public boolean load() {
         return true;
     }
-    public void save() {
-
-    }
+    public void save() {}
 }
