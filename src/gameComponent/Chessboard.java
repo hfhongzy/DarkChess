@@ -48,6 +48,7 @@ public class Chessboard extends JComponent {
         
         // todo : movement gameController->steps
     }
+    public ChessComponent[][] getChessComponents() { return chessComponents; }
     public ChessComponent getChessComponent(int x, int y) {
         return chessComponents[x][y];
     }
@@ -726,6 +727,7 @@ public class Chessboard extends JComponent {
                 return ".darkchess 文件";
             }
         });
+        
         int fres = fileChooser.showOpenDialog(null);
         if(fres == JFileChooser.APPROVE_OPTION) {
             System.out.println(fileChooser.getSelectedFile());

@@ -54,13 +54,23 @@ public class AIPlayer extends Thread {
         })
          */
 //        for (int i = 1; i <= )
+        MCTNode root = new MCTNode(chessboard, null, null, 1, 1);
+        System.out.println(root.toString());
+        root.generate();
         while (true) {
             long current_time = System.currentTimeMillis();
             if (current_time - begin_time >= think_time * 1000L)
                 break;
-            // todo
+            
+            for(int test = 0; test < 100; test ++) {
+                MCTNode.dfs(root);
+            }
         }
+        
+        MCTNode next = root.best2();
+        chessboard.moveChess(next.chessStep.toString());
         // move
+        /*
         for (int i = 0; i < 8; i++) {
             boolean flag = false;
             for (int j = 0; j < 4; j++) {
@@ -73,6 +83,8 @@ public class AIPlayer extends Thread {
             }
             if (flag) break;
         }
+        
+         */
         pveGameController.setMyTurn(true);
     }
 }
