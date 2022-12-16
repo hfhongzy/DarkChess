@@ -66,25 +66,15 @@ public class AIPlayer extends Thread {
                 MCTNode.dfs(root);
             }
         }
-        
+        System.out.println("lxak!");
+        for(int i = 0; i < root.pointer; i ++) {
+            MCTNode node = root.child.get(i);
+            System.out.println(node.chessStep.toString() + " 's vi/ni is: ");
+            System.out.println(1-node.v / node.n);
+        }
         MCTNode next = root.best2();
         chessboard.moveChess(next.chessStep.toString());
         // move
-        /*
-        for (int i = 0; i < 8; i++) {
-            boolean flag = false;
-            for (int j = 0; j < 4; j++) {
-                ChessComponent chess = chessboard.getChessComponent(i, j);
-                if (!chess.isEaten() && chess.isReversal()) {
-                    chessboard.flip(chess);
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag) break;
-        }
-        
-         */
         pveGameController.setMyTurn(true);
     }
 }

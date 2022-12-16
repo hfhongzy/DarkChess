@@ -23,6 +23,15 @@ public class PVEGameController extends GameController {
     }
     @Override
     public void onClick(ChessComponent chess) {
+        /*
+        if (chessboard.isEnded()) return;
+        if (myTurn) {
+            myTurn = false;
+            AIPlayer aiPlayer = new AIPlayer(this, 5);
+            aiPlayer.start();
+        }
+        */
+//        /*
         if (chessboard.isEnded() || !myTurn) return;
         if (chessboard.click(chess)) {
             myTurn = false;
@@ -31,6 +40,7 @@ public class PVEGameController extends GameController {
                 aiPlayer.start();
             }
         }
+//         */
     }
     @Override
     public void restart() {

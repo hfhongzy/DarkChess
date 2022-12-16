@@ -20,10 +20,10 @@ public class MCTNode {
   final static double p_eps = 0.01;
   static int[] score = {0, 30, 10, 5, 5, 5, 1, 5};
   public byte [][]a = new byte[8][4];
-  static final double c = 1.4;
+  static final double c = sqrt(2.0);
   static double N0 = 0;
   public double ucb() {
-    return v / n + c * sqrt(log(N0) / n);
+    return 1 - v / n + c * sqrt(log(N0) / n);
   }
   public MCTNode(Chessboard chessboard, MCTNode father, ChessStep chessStep, double p, double q) {
     this.p = p;
@@ -67,14 +67,15 @@ public class MCTNode {
     this.father = father;
     this.chessStep = chessStep;
     for(int i = 0; i < 8; i ++)
-      System.arraycopy(a[i], 0, this.a[i], 0, 4);
+      for(int j = 0; j < 4; j ++)
+        this.a[i][j] = (byte) -a[i][j];
   }
   static boolean valid(int x, int y) {
     return 0 <= x && x < 8 && 0 <= y && y < 4;
   }
   static boolean greater(int x, int y) { //x > 0, y < 0
     y = -y;
-    return x == 6 ? (y == 1 || y == 7) : x <= y;
+    return x == 6 ? (y == 1 || y == 6) : x <= y;
   }
   
   public void generate() {
@@ -160,6 +161,9 @@ public class MCTNode {
     }
     shuffle(child);
   }
+  double f(double x) {
+    return 1 / (1 + exp(-x));
+  }
   double evaluate() {
     double my = 0, your = 0;
     for (int i = 0; i < 8; i ++) {
@@ -173,26 +177,31 @@ public class MCTNode {
     }
     if(my >= 60) return 1;
     if(your >= 60) return 0;
+    return f(2.2 * (my - your) / (60 - max(my, your)));
+    /*
     double u = Math.min(my, your);
     double v = Math.max(my, your);
-    return 0.5 + (my > your ? 0.5 : -0.5) * ( (v - u) / (60 - v) / 10 );
+    return 0.5 + (my > your ? 0.5 : -0.5) * ( (v - u) / (60 - v) / 59 );
+    */
   }
   static public void back(MCTNode u) {
     double v = u.v = u.evaluate();
     double n = u.n = 1;
-    N0 += u.p * 1;
+    double base = 1;
+//    N0 += u.p * 1;
     while(u.father != null) {
-      v *= u.q;
-      n *= u.q;
+      v = 1 - v;
+      base *= u.q;
       u = u.father;
-      u.n += n;
-      u.v += v;
+      u.n += n * base;
+      u.v += v * base;
     }
+    N0 += base;
   }
   public MCTNode best2() {
     MCTNode res = null;
     for(int i = 0; i < pointer; i ++) {
-      if(res == null || res.n < child.get(i).n) {
+      if(res == null || res.v / res.n > child.get(i).v / child.get(i).n) {
         res = child.get(i);
       }
     }
@@ -210,7 +219,7 @@ public class MCTNode {
   static int co = 0;
   static public void dfs(MCTNode u) {
     if(u == null) return ;
-    System.out.printf("%d!", co++);
+//    System.out.printf("%d!", co++);
     if(u.pointer >= u.child.size()) {
       dfs(u.best());
       return ;
