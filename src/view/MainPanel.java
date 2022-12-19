@@ -18,9 +18,9 @@ public class MainPanel extends JPanel {
         title.setLocation(400 - title.getWidth() / 2, 80);
         add(title);
 
-        GameButton singlePlayerButton = new GameButton(200, 40, "单人模式", () -> {
+        GameButton singlePlayerButton = new GameButton(200, 40, "人机模式", () -> {
             PVEGameController pveGameController = new PVEGameController(1);
-            pveGameController.setMode(false, true, true, true);
+            pveGameController.setMode(false, true, true, false);
             mainFrame.playGamePanel.setGameController(pveGameController);
             mainFrame.playGamePanel.start();
             mainFrame.showPanel(PanelType.PLAY_GAME_PANEL);

@@ -11,7 +11,8 @@ import java.util.ArrayList;
 public class OnlineGameController extends GameController {
     Server server;
     Client client;
-    private boolean myTurn, isServer;
+    private boolean myTurn;
+    final private boolean isServer;
     public void changeTurn() {
         myTurn = !myTurn;
         System.out.println("myturn : "  + String.valueOf(myTurn));
@@ -81,7 +82,6 @@ public class OnlineGameController extends GameController {
                 client.send(chessboard.getLastStep());
             myTurn = false;
             System.out.println("click");
-            //chess.move( server.read(); )
             if(isServer)
                 server.listening = true;
             else

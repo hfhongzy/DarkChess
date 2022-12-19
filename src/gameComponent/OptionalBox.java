@@ -56,5 +56,6 @@ public class OptionalBox extends JComponent {
         cheatButton.setWorking(cheat);
         restartButton.setWorking(restart);
         loadButton.setWorking(load);
+        saveButton.setWorking(load); //new
     }
 }

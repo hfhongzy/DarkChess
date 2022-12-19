@@ -103,7 +103,7 @@ public class Server extends Network{
         }
        
         messageIn = messageIn.substring(1);
-        System.out.println("RECEIVED:  " + messageIn);
+        System.out.println("RECEIVED: " + messageIn);
         if(!Character.isAlphabetic(messageIn.charAt(messageIn.length() - 2))) {
           onlineGameController.getChessboard().moveChess(messageIn);
           onlineGameController.changeTurn();

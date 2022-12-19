@@ -30,7 +30,7 @@ public class ServerWait extends Thread{
   public void run() {
     onlineGameController = new OnlineGameController(true);
     onlineGameController.construct();
-    onlineGameController.setMode(true, true, true, true);
+    onlineGameController.setMode(false, false, true, false);
     playGamePanel.setGameController(onlineGameController);
     onlineGameController.addControllerToNet();
     if(onlineGameController.isConnected()) {
