@@ -1,5 +1,6 @@
 import archiveManager.ArchiveManager;
 import network.Message;
+import sound.Music;
 import view.MainFrame;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println(args.length);
         //Orz System.getProperty()
-        
+        Music.start();
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame(800,600);
 //            ArchiveManager.init(mainFrame);

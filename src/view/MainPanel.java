@@ -5,6 +5,7 @@ import gameController.PVEGameController;
 import labelComponent.GameLabel;
 import labelComponent.TextBlock;
 import model.PanelType;
+import sound.Music;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,5 +44,11 @@ public class MainPanel extends JPanel {
         });
         exitButton.setLocation(300, 440);
         add(exitButton);
+        
+        
+        GameButton musicButton = new GameButton(200, 40, "关闭音乐", Music::flipMusic);
+        Music.musicButton = musicButton;
+        musicButton.setLocation(300, 520);
+        add(musicButton);
     }
 }

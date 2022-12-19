@@ -7,6 +7,16 @@ import java.awt.event.MouseEvent;
 
 public class GameButton extends JComponent {
     final int WIDTH, HEIGHT;
+    
+    @Override
+    public String getName() {
+        return name;
+    }
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     String name;
     private boolean isEnter;
     private boolean isPressed;
